@@ -1,0 +1,452 @@
+basePath: /api/v1
+definitions:
+  ai_hack.DialogStatus:
+    enum:
+    - open
+    - in_progress
+    - close
+    type: string
+    x-enum-varnames:
+    - DialogStatusOpen
+    - DialogStatusInProgress
+    - DialogStatusClose
+  ai_hack.Role:
+    enum:
+    - operator
+    - client
+    type: string
+    x-enum-varnames:
+    - RoleOperator
+    - RoleClient
+  internal.Dialog:
+    properties:
+      client_id:
+        type: integer
+      created_at:
+        type: string
+      dialogs_messages:
+        items:
+          $ref: '#/definitions/internal.DialogMessage'
+        type: array
+      id:
+        type: string
+      operator_id:
+        type: integer
+      status:
+        $ref: '#/definitions/ai_hack.DialogStatus'
+    type: object
+  internal.DialogCU:
+    properties:
+      message:
+        type: string
+    required:
+    - message
+    type: object
+  internal.DialogListResponse:
+    properties:
+      client_id:
+        type: integer
+      created_at:
+        type: string
+      dialogs_messages:
+        items:
+          $ref: '#/definitions/internal.DialogMessage'
+        type: array
+      id:
+        type: string
+      limit:
+        type: integer
+      offset:
+        type: integer
+      operator_id:
+        type: integer
+      page:
+        type: integer
+      status:
+        $ref: '#/definitions/ai_hack.DialogStatus'
+    required:
+    - limit
+    - offset
+    type: object
+  internal.DialogMessage:
+    properties:
+      dialog_id:
+        type: string
+      message:
+        type: string
+      role:
+        $ref: '#/definitions/ai_hack.Role'
+    required:
+    - message
+    - role
+    type: object
+  internal.UserCU:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/ai_hack.Role'
+        enum:
+        - client
+        - operator
+    required:
+    - email
+    - password
+    - role
+    type: object
+  internal.UserListResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      limit:
+        type: integer
+      offset:
+        type: integer
+      page:
+        type: integer
+      role:
+        $ref: '#/definitions/ai_hack.Role'
+    required:
+    - limit
+    - offset
+    type: object
+  internal.UserLogin:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  v1.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  v1.Token:
+    properties:
+      jwt:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8081
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /dialog:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: search by client_id
+        in: query
+        name: client_id
+        type: integer
+      - description: search by operator_id
+        in: query
+        name: operator_id
+        type: integer
+      - description: search by status
+        in: query
+        name: status
+        type: string
+      - description: search by limit
+        in: query
+        name: limit
+        type: integer
+      - description: search by offset
+        in: query
+        name: offset
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal.DialogListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: List dialogs
+      tags:
+      - dialog
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Dialog object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal.DialogCU'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Create dialog
+      tags:
+      - dialog
+  /dialog/{id}:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Delete dialog
+      tags:
+      - dialog
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal.Dialog'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Get dialog
+      tags:
+      - dialog
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Dialog object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal.DialogCU'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Update dialog
+      tags:
+      - dialog
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User login object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1.Token'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Login
+      tags:
+      - user
+  /profile:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: GetProfile
+      tags:
+      - user
+  /user:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal.UserCU'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Create user
+      tags:
+      - user
+  /users:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: search by client_id
+        in: query
+        name: email
+        type: string
+      - description: search by operator_id
+        in: query
+        name: role
+        type: string
+      - description: search by limit
+        in: query
+        name: limit
+        type: integer
+      - description: search by offset
+        in: query
+        name: offset
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal.UserListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: List users
+      tags:
+      - user
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
