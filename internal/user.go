@@ -24,7 +24,7 @@ type (
 
 	UserPars struct {
 		Email         string      `schema:"email,omitempty"`
-		Role          aihack.Role `schema:"role,omitempty" validate:"oneof=client operator"`
+		Role          aihack.Role `schema:"role,omitempty"`
 		CreatedBefore time.Time   `schema:"created_before"`
 		CreatedAfter  time.Time   `schema:"created_after"`
 		PaginationParams

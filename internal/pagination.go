@@ -3,7 +3,7 @@ package internal
 type (
 	PaginationParams struct {
 		Limit  int `schema:"limit,omitempty" validate:"required"`
-		Offset int `schema:"offset,omitempty" validate:"required"`
+		Offset int `schema:"offset,omitempty"`
 		Page   int `schema:"page,omitempty"`
 	}
 )
