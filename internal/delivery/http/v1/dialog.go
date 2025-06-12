@@ -100,7 +100,7 @@ func (h *Handler) DialogGet(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Param        data body internal.DialogMessage    true "DialogMessage object"
-// @Success      201
+// @Success      200  {object}  internal.DialogMessageResponse
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
 // @Failure      500  {object}  ErrorResponse
@@ -127,12 +127,17 @@ func (h *Handler) DialogAddMessage(w http.ResponseWriter, r *http.Request) {
 
 	obj.Role = role
 
-	if err := h.uc.DialogAddMessage(r.Context(), obj); err != nil {
+	resp, err := h.uc.DialogAddMessage(r.Context(), obj)
+	if err != nil {
 		h.errorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
+	if err = json.NewEncoder(w).Encode(resp); err != nil {
+		h.errorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
 }
 
 // DialogUpdate godoc

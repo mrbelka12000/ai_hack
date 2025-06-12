@@ -297,8 +297,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created"
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal.DialogMessageResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -589,8 +592,7 @@ const docTemplate = `{
         "internal.DialogListResponse": {
             "type": "object",
             "required": [
-                "limit",
-                "offset"
+                "limit"
             ],
             "properties": {
                 "client_id": {
@@ -643,6 +645,29 @@ const docTemplate = `{
                 }
             }
         },
+        "internal.DialogMessageResponse": {
+            "type": "object",
+            "properties": {
+                "confidence": {
+                    "type": "integer"
+                },
+                "database_file": {
+                    "type": "string"
+                },
+                "database_file_part": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "relative_questions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "internal.UserCU": {
             "type": "object",
             "required": [
@@ -673,8 +698,7 @@ const docTemplate = `{
         "internal.UserListResponse": {
             "type": "object",
             "required": [
-                "limit",
-                "offset"
+                "limit"
             ],
             "properties": {
                 "created_at": {

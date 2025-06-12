@@ -66,7 +66,6 @@ definitions:
         $ref: '#/definitions/ai_hack.DialogStatus'
     required:
     - limit
-    - offset
     type: object
   internal.DialogMessage:
     properties:
@@ -79,6 +78,21 @@ definitions:
     required:
     - message
     - role
+    type: object
+  internal.DialogMessageResponse:
+    properties:
+      confidence:
+        type: integer
+      database_file:
+        type: string
+      database_file_part:
+        type: string
+      message:
+        type: string
+      relative_questions:
+        items:
+          type: string
+        type: array
     type: object
   internal.UserCU:
     properties:
@@ -115,7 +129,6 @@ definitions:
         $ref: '#/definitions/ai_hack.Role'
     required:
     - limit
-    - offset
     type: object
   internal.UserLogin:
     properties:
@@ -326,8 +339,10 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal.DialogMessageResponse'
         "400":
           description: Bad Request
           schema:
