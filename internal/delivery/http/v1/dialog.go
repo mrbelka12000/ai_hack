@@ -94,6 +94,18 @@ func (h *Handler) DialogGet(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
+// DialogAddMessage godoc
+// @Summary      Continue dialog
+// @Tags         dialog
+// @Accept       json
+// @Produce      json
+// @Param        data body internal.DialogMessage    true "DialogMessage object"
+// @Success      201
+// @Failure      400  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Failure      500  {object}  ErrorResponse
+// @Router       /dialog_message [post]
+// @Security Bearer
 func (h *Handler) DialogAddMessage(w http.ResponseWriter, r *http.Request) {
 	var obj internal.DialogMessage
 	if err := json.NewDecoder(r.Body).Decode(&obj); err != nil {

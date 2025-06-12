@@ -43,6 +43,7 @@ func Init(uc *usecase.UseCase, mx *mux.Router, log *slog.Logger) {
 
 	mx.HandleFunc(apiPath+"/dialog", h.DialogCreate).Methods(http.MethodPost, http.MethodOptions)
 	mx.HandleFunc(apiPath+"/dialog", h.DialogList).Methods(http.MethodGet, http.MethodOptions)
+	mx.HandleFunc(apiPath+"/dialog_message", h.DialogAddMessage).Methods(http.MethodPost, http.MethodOptions)
 	mx.HandleFunc(apiPath+"/dialog/{id}", h.DialogDelete).Methods(http.MethodDelete, http.MethodOptions)
 	mx.HandleFunc(apiPath+"/dialog/{id}", h.DialogUpdate).Methods(http.MethodPut, http.MethodOptions)
 	mx.HandleFunc(apiPath+"/dialog/{id}", h.DialogGet).Methods(http.MethodGet, http.MethodOptions)
