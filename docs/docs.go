@@ -171,13 +171,16 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal.DialogMessageResponse"
+                            "$ref": "#/definitions/internal.DialogFull"
                         }
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created"
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal.DialogMessageResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -694,6 +697,17 @@ const docTemplate = `{
             ],
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal.DialogFull": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "phone_number": {
                     "type": "string"
                 }
             }

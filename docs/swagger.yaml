@@ -42,6 +42,13 @@ definitions:
     required:
     - message
     type: object
+  internal.DialogFull:
+    properties:
+      message:
+        type: string
+      phone_number:
+        type: string
+    type: object
   internal.DialogListResponse:
     properties:
       client_id:
@@ -352,12 +359,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/internal.DialogMessageResponse'
+          $ref: '#/definitions/internal.DialogFull'
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal.DialogMessageResponse'
         "400":
           description: Bad Request
           schema:
