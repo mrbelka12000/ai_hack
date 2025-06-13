@@ -52,7 +52,6 @@ func (h *Handler) DialogCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		h.errorResponse(w, err, http.StatusInternalServerError)
 		return

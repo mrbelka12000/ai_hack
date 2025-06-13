@@ -42,7 +42,7 @@ func (uc *UseCase) DialogCreate(ctx context.Context, obj internal.DialogCU) (out
 
 	response.DialogID = dialogID
 
-	return out, nil
+	return response, nil
 }
 
 func (uc *UseCase) DialogList(ctx context.Context, pars internal.DialogPars) ([]internal.Dialog, error) {
