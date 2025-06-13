@@ -3,6 +3,7 @@ package v1
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -38,6 +39,7 @@ func (h *Handler) DialogCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(r.Context().Value(userKey))
 	user, ok := r.Context().Value(userKey).(internal.User)
 	if !ok {
 		h.errorResponse(w, errors.New(http.StatusText(http.StatusUnauthorized)), http.StatusUnauthorized)

@@ -66,7 +66,7 @@ func castClaims(claims map[string]interface{}) (internal.User, error) {
 		return internal.User{}, errors.New("invalid token")
 	}
 
-	role, ok := claims["role"].(aihack.Role)
+	role, ok := claims["role"].(string)
 	if !ok {
 		return internal.User{}, errors.New("invalid role")
 	}
@@ -74,6 +74,6 @@ func castClaims(claims map[string]interface{}) (internal.User, error) {
 	return internal.User{
 		ID:    int64(id),
 		Email: email,
-		Role:  role,
+		Role:  aihack.Role(role),
 	}, nil
 }

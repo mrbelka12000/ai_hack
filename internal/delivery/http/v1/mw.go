@@ -2,7 +2,6 @@ package v1
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -27,7 +26,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		jwtRaw, ok := r.Header["Authorization"]
 		if !ok {
-			fmt.Println("no Authorization header")
+			h.log.Info("no Authorization header")
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -36,12 +35,14 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 
 		claims, err := h.jwtPayloadFromRequest(jwtToken)
 		if err != nil {
+			h.log.With("error", err).Info("jwt payload invalid")
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		user, err := castClaims(claims)
 		if err != nil {
+			h.log.With("error", err).Info("cast claims")
 			next.ServeHTTP(w, r)
 			return
 		}
