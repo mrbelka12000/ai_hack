@@ -24,5 +24,5 @@ CREATE TABLE IF NOT EXISTS personal_data(
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE mb;
+DROP TABLE personal_data;
 -- +goose StatementEnd
