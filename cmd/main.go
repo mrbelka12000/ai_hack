@@ -16,6 +16,7 @@ import (
 	"github.com/mrbelka12000/ai_hack/migrations"
 	"github.com/mrbelka12000/ai_hack/pkg/config"
 	"github.com/mrbelka12000/ai_hack/pkg/gorm/postgres"
+	"github.com/mrbelka12000/ai_hack/pkg/redis"
 	"github.com/mrbelka12000/ai_hack/pkg/server"
 )
 
@@ -31,7 +32,7 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      aiport.mrbelka12000.com
+// @host      aihack.mrbelka12000.com
 // @BasePath  /api/v1
 
 // @securityDefinitions.apikey Bearer
@@ -57,15 +58,15 @@ func main() {
 	migrations.RunMigrations(db)
 
 	repository := repo.New(db)
-	//rds, err := redis.New(cfg)
-	//if err != nil {
-	//	log.With("error", err).Error("failed to connect to redis")
-	//	return
-	//}
+	rds, err := redis.New(cfg)
+	if err != nil {
+		log.With("error", err).Error("failed to connect to redis")
+		return
+	}
 
 	mlClient := ml.NewClient(cfg.AISuflerAPIURL, log)
 
-	uc := usecase.New(repository, log, nil, mlClient)
+	uc := usecase.New(repository, log, rds, mlClient)
 
 	mx := mux.NewRouter()
 	v1.Init(uc, mx, log)
