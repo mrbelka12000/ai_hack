@@ -43,6 +43,7 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage) (o
 	messageToSave := getMessageToSaveInRedis(obj)
 
 	fullDialog := constructDialog(messageFromCache, messageToSave)
+
 	resp, err := s.mlClient.Analyze(ctx, ml.AnalyzeRequest{
 		DialogId: obj.DialogID.String(),
 		Dialog:   fullDialog,

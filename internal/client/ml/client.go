@@ -75,7 +75,7 @@ func (c *Client) do(ctx context.Context, in, out any, reqURL, reqMethod string) 
 	}
 
 	if out != nil {
-		if err := json.Unmarshal(responseBody, &out); err != nil {
+		if err := json.Unmarshal(responseBody, out); err != nil {
 			return 0, err
 		}
 	}
