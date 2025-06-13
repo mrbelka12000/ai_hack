@@ -43,9 +43,6 @@ func (s *Service) StartParse(filePath string) error {
 		}
 
 		val := strings.Split(record[0], ";")
-		//for i, v := range val {
-		//	fmt.Println(i, v)
-		//}
 
 		if len(val) < 51 {
 			fmt.Println("Skipping row due to invalid len:", val)
