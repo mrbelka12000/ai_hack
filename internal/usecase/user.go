@@ -2,10 +2,8 @@ package usecase
 
 import (
 	"context"
-	"errors"
 
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/mrbelka12000/ai_hack/internal"
 )
@@ -32,21 +30,11 @@ func (uc *UseCase) UserList(ctx context.Context, pars internal.UserPars) ([]inte
 
 func (uc *UseCase) UserLogin(ctx context.Context, obj internal.UserLogin) (out internal.User, err error) {
 	user, err := uc.userService.Get(ctx, internal.UserGetPars{
-		Email: obj.Email,
+		PhoneNumber: obj.PhoneNumber,
 	})
 	if err != nil {
 		return out, err
 	}
 
-	if !verifyPassword(obj.Password, user.Password) {
-		return out, errors.New("invalid email or password")
-	}
-
 	return user, nil
-}
-
-// verifyPassword verifies if the given password matches the stored hash.
-func verifyPassword(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
 }

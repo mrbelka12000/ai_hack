@@ -80,9 +80,10 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(Token{
-		JWT: jwt,
-	})
+	if err := json.NewEncoder(w).Encode(Token{JWT: jwt}); err != nil {
+		h.errorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
 }
 
 // UsersList godoc
@@ -90,10 +91,10 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        email    query     string  false  "search by client_id"
-// @Param        role    query     string  false  "search by operator_id"
-// @Param        limit    query     int  false  "search by limit"
-// @Param        offset    query     string  false  "search by offset"
+// @Param        phone_number    query     string  false  "search by phone_number"
+// @Param        role    query     string  false  "search by role"
+// @Param        limit    query     int  false  "limit"
+// @Param        offset    query     string  false  "offset"
 // @Success      200  {object}	internal.UserListResponse
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
@@ -144,7 +145,7 @@ func (h *Handler) UsersList(w http.ResponseWriter, r *http.Request) {
 // @Failure      404  {object}  ErrorResponse
 // @Failure      500  {object}  ErrorResponse
 // @Router       /profile [post]
-// @Security Bearer
+// @Security 	 Bearer
 func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {
 	user, ok := r.Context().Value(userKey).(internal.User)
 	if !ok {

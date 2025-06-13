@@ -17,10 +17,10 @@ type Token struct {
 
 func (h *Handler) buildJWT(user internal.User) (string, error) {
 	payload := jwt.MapClaims{
-		"email": user.Email,
-		"id":    user.ID,
-		"role":  user.Role,
-		"exp":   time.Now().Add(time.Hour * 72).Unix(),
+		"phone_number": user.PhoneNumber,
+		"id":           user.ID,
+		"role":         user.Role,
+		"exp":          time.Now().Add(time.Hour * 72).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
@@ -61,7 +61,7 @@ func castClaims(claims map[string]interface{}) (internal.User, error) {
 		return internal.User{}, errors.New("invalid token")
 	}
 
-	email, ok := claims["email"].(string)
+	phoneNumber, ok := claims["phone_number"].(string)
 	if !ok {
 		return internal.User{}, errors.New("invalid token")
 	}
@@ -72,8 +72,8 @@ func castClaims(claims map[string]interface{}) (internal.User, error) {
 	}
 
 	return internal.User{
-		ID:    int64(id),
-		Email: email,
-		Role:  aihack.Role(role),
+		ID:          int64(id),
+		PhoneNumber: phoneNumber,
+		Role:        aihack.Role(role),
 	}, nil
 }

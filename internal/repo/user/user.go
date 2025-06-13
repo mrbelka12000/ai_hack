@@ -27,11 +27,11 @@ func (r *Repo) Update(ctx context.Context, obj internal.UserCU) error {
 	return r.db.WithContext(ctx).
 		Model(&internal.User{}).
 		Table("users").
-		Where("email = ?", obj.Email).
+		Where("phone_number = ?", obj.PhoneNumber).
 		Updates(map[string]interface{}{
-			"password":   obj.Password,
-			"role":       obj.Role,
-			"created_at": obj.CreatedAt,
+			"phone_number": obj.PhoneNumber,
+			"role":         obj.Role,
+			"created_at":   obj.CreatedAt,
 		}).Error
 }
 
@@ -48,8 +48,8 @@ func (r *Repo) Get(ctx context.Context, pars internal.UserGetPars) (internal.Use
 	if pars.ID != 0 {
 		db = db.Where("id = ?", pars.ID)
 	}
-	if pars.Email != "" {
-		db = db.Where("email = ?", pars.Email)
+	if pars.PhoneNumber != "" {
+		db = db.Where("phone_number = ?", pars.PhoneNumber)
 	}
 	if pars.Role != "" {
 		db = db.Where("role = ?", pars.Role)
@@ -63,8 +63,8 @@ func (r *Repo) List(ctx context.Context, pars internal.UserPars) ([]internal.Use
 	var users []internal.User
 	query := r.db.WithContext(ctx).Table("users").Model(&internal.User{})
 
-	if pars.Email != "" {
-		query = query.Where("email = ?", pars.Email)
+	if pars.PhoneNumber != "" {
+		query = query.Where("phone_number = ?", pars.PhoneNumber)
 	}
 	if pars.Role != "" {
 		query = query.Where("role = ?", pars.Role)
