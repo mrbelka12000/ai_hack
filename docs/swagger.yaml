@@ -342,6 +342,39 @@ paths:
       summary: Update dialog
       tags:
       - dialog
+  /dialog/full:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Dialog object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal.DialogMessageResponse'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Upload dialog
+      tags:
+      - dialog
   /dialog_message:
     post:
       consumes:
