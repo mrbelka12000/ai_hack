@@ -16,7 +16,6 @@ import (
 	"github.com/mrbelka12000/ai_hack/migrations"
 	"github.com/mrbelka12000/ai_hack/pkg/config"
 	"github.com/mrbelka12000/ai_hack/pkg/gorm/postgres"
-	"github.com/mrbelka12000/ai_hack/pkg/redis"
 	"github.com/mrbelka12000/ai_hack/pkg/server"
 )
 
@@ -58,15 +57,15 @@ func main() {
 	migrations.RunMigrations(db)
 
 	repository := repo.New(db)
-	rds, err := redis.New(cfg)
-	if err != nil {
-		log.With("error", err).Error("failed to connect to redis")
-		return
-	}
+	//rds, err := redis.New(cfg)
+	//if err != nil {
+	//	log.With("error", err).Error("failed to connect to redis")
+	//	return
+	//}
 
 	mlClient := ml.NewClient(cfg.AISuflerAPIURL, log)
 
-	uc := usecase.New(repository, log, rds, mlClient)
+	uc := usecase.New(repository, log, nil, mlClient)
 
 	mx := mux.NewRouter()
 	v1.Init(uc, mx, log)
