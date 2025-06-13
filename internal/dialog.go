@@ -38,10 +38,6 @@ type (
 		PaginationParams
 	}
 
-	DialogCreateResp struct {
-		ID uuid.UUID `json:"id"`
-	}
-
 	DialogListResponse struct {
 		Dialog
 		PaginationParams

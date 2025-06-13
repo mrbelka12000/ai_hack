@@ -3,7 +3,6 @@ package v1
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -19,7 +18,7 @@ import (
 // @Tags         dialog
 // @Accept       json
 // @Produce      json
-// @Param        data body internal.DialogCU    true "Dialog object"
+// @Param        data body internal.DialogMessageResponse    true "Dialog object"
 // @Success      201
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
@@ -39,7 +38,6 @@ func (h *Handler) DialogCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(r.Context().Value(userKey))
 	user, ok := r.Context().Value(userKey).(internal.User)
 	if !ok {
 		h.errorResponse(w, errors.New(http.StatusText(http.StatusUnauthorized)), http.StatusUnauthorized)
@@ -48,16 +46,14 @@ func (h *Handler) DialogCreate(w http.ResponseWriter, r *http.Request) {
 
 	obj.ClientID = user.ID
 
-	id, err := h.uc.DialogCreate(r.Context(), obj)
+	response, err := h.uc.DialogCreate(r.Context(), obj)
 	if err != nil {
 		h.errorResponse(w, err, http.StatusBadRequest)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(internal.DialogCreateResp{
-		ID: id,
-	}); err != nil {
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		h.errorResponse(w, err, http.StatusInternalServerError)
 		return
 	}

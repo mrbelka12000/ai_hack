@@ -22,10 +22,10 @@ func (uc *UseCase) DialogUpdate(ctx context.Context, obj internal.Dialog) error 
 	return uc.dialogService.Update(ctx, obj)
 }
 
-func (uc *UseCase) DialogCreate(ctx context.Context, obj internal.DialogCU) (uuid.UUID, error) {
+func (uc *UseCase) DialogCreate(ctx context.Context, obj internal.DialogCU) (out internal.DialogMessageResponse, err error) {
 	dialogID, err := uc.dialogService.Create(ctx, obj)
 	if err != nil {
-		return uuid.Nil, err
+		return out, err
 	}
 
 	dmObj := internal.DialogMessage{
@@ -35,12 +35,14 @@ func (uc *UseCase) DialogCreate(ctx context.Context, obj internal.DialogCU) (uui
 		CreatedAt: time.Now().UTC(),
 	}
 
-	_, err = uc.dialogsMessagesService.AddMessage(ctx, dmObj)
+	response, err := uc.dialogsMessagesService.AddMessage(ctx, dmObj)
 	if err != nil {
-		return uuid.Nil, err
+		return out, err
 	}
 
-	return dialogID, nil
+	response.DialogID = dialogID
+
+	return out, nil
 }
 
 func (uc *UseCase) DialogList(ctx context.Context, pars internal.DialogPars) ([]internal.Dialog, error) {
