@@ -118,13 +118,16 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal.DialogMessageResponse"
+                            "$ref": "#/definitions/internal.DialogCU"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created"
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/internal.DialogMessageResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",

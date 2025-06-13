@@ -18,8 +18,8 @@ import (
 // @Tags         dialog
 // @Accept       json
 // @Produce      json
-// @Param        data body internal.DialogMessageResponse    true "Dialog object"
-// @Success      201
+// @Param        data body internal.DialogCU     true "Dialog object"
+// @Success      201  {object} internal.DialogMessageResponse
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
 // @Failure      500  {object}  ErrorResponse

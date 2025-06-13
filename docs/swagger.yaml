@@ -247,12 +247,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/internal.DialogMessageResponse'
+          $ref: '#/definitions/internal.DialogCU'
       produces:
       - application/json
       responses:
         "201":
           description: Created
+          schema:
+            $ref: '#/definitions/internal.DialogMessageResponse'
         "400":
           description: Bad Request
           schema:
