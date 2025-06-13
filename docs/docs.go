@@ -376,7 +376,7 @@ const docTemplate = `{
             }
         },
         "/profile": {
-            "post": {
+            "get": {
                 "security": [
                     {
                         "Bearer": []

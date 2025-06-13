@@ -404,7 +404,7 @@ paths:
       tags:
       - user
   /profile:
-    post:
+    get:
       consumes:
       - application/json
       produces:

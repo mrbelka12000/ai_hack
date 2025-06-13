@@ -370,7 +370,7 @@
             }
         },
         "/profile": {
-            "post": {
+            "get": {
                 "security": [
                     {
                         "Bearer": []

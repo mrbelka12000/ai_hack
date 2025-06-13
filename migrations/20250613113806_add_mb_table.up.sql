@@ -1,22 +1,22 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE IF NOT EXISTS mb(
+CREATE TABLE IF NOT EXISTS personal_data(
     id VARCHAR NOT NULL,
-    cust_id VARCHAR NOT NULL,
-    acct VARCHAR NOT NULL,
     br VARCHAR NOT NULL,
-    segment VARCHAR NOT NULL,
-    product VARCHAR NOT NULL,
-    cont_code VARCHAR NOT NULL,
-    cont_type VARCHAR NOT NULL,
-    doc_num VARCHAR,
-    subs_loanto VARCHAR,
-    line_type VARCHAR,
-    end_date VARCHAR,
+    currency VARCHAR,
+    beg_date VARCHAR,
+    env_date VARCHAR,
+    prol_date VARCHAR,
+    prol_count VARCHAR,
+    amt VARCHAR,
     amt_tng VARCHAR,
-    od_tng VARCHAR,
+    od VARCHAR,
+    pr_od VARCHAR,
+    day_pr_od VARCHAR,
+    pgg VARCHAR,
     stav VARCHAR,
-    day_pr_pr VARCHAR
+    sht VARCHAR
+
 );
 -- +goose StatementEnd
 
