@@ -67,9 +67,12 @@ func main() {
 	mlClient := ml.NewClient(cfg.AISuflerAPIURL, log)
 
 	uc := usecase.New(repository, log, rds, mlClient)
-	if err := uc.StartParse(cfg.CSVFile); err != nil {
-		log.Error("failed to start parser", "error", err)
-		return
+
+	if cfg.RunMBMigration {
+		if err := uc.StartParseMB(cfg.CSVFile); err != nil {
+			log.Error("failed to start parser", "error", err)
+			return
+		}
 	}
 
 	mx := mux.NewRouter()

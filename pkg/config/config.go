@@ -18,10 +18,11 @@ type (
 	}
 
 	InstanceConfig struct {
-		ServiceName string `env:"SERVICE_NAME,required"`
-		HTTPPort    string `env:"HTTP_PORT, default=8081"`
-		PublicURL   string `env:"PUBLIC_URL,required"`
-		CSVFile     string `env:"CSV_FILE,required"`
+		ServiceName    string `env:"SERVICE_NAME,required"`
+		HTTPPort       string `env:"HTTP_PORT, default=8081"`
+		PublicURL      string `env:"PUBLIC_URL,required"`
+		CSVFile        string `env:"CSV_FILE,required"`
+		RunMBMigration bool   `env:"RUN_MB_MIGRATION, default=false"`
 	}
 
 	DBConfig struct {
