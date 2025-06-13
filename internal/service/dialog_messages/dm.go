@@ -13,7 +13,8 @@ import (
 )
 
 const (
-	defaultTTL = 30 * time.Minute
+	defaultTTL          = 30 * time.Minute
+	dialogMessagePrefix = "dialogMessage-"
 )
 
 type Service struct {
@@ -39,7 +40,7 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage, ne
 		return out, err
 	}
 
-	messageFromCache, _ := s.cache.Get(obj.DialogID.String())
+	messageFromCache, _ := s.cache.Get(dialogMessagePrefix + obj.DialogID.String())
 	messageToSave := getMessageToSaveInRedis(obj)
 
 	fullDialog := constructDialog(messageFromCache, messageToSave)
@@ -55,9 +56,10 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage, ne
 		if err != nil {
 			return out, err
 		}
+
 	}
 
-	if err = s.cache.Set(obj.DialogID.String(), fullDialog, defaultTTL); err != nil {
+	if err = s.cache.Set(dialogMessagePrefix+obj.DialogID.String(), fullDialog, defaultTTL); err != nil {
 		return out, err
 	}
 

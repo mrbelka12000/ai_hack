@@ -23,5 +23,6 @@ type (
 	cache interface {
 		Set(key string, value interface{}, dur time.Duration) error
 		Get(key string) (string, bool)
+		Delete(key string)
 	}
 )

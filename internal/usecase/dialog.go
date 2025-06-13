@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"regexp"
 	"strings"
 	"time"
@@ -45,7 +44,6 @@ func (uc *UseCase) DialogCreate(ctx context.Context, obj internal.DialogCU) (id 
 		return uuid.Nil, err
 	}
 
-	fmt.Println(response)
 	rawData, err := json.Marshal(response)
 	if err != nil {
 		return uuid.Nil, err
@@ -90,18 +88,18 @@ func (uc *UseCase) DialogAddMessage(ctx context.Context, obj internal.DialogMess
 	if obj.Role == aihack.RoleOperator {
 		return nil
 	}
-	
+
 	rawData, err := json.Marshal(response)
 	if err != nil {
 		return err
 	}
 
-	dialog := internal.Dialog{
+	dialogObj := internal.Dialog{
 		ID:      obj.DialogID,
 		RawData: rawData,
 	}
 
-	if err = uc.dialogService.Update(ctx, dialog); err != nil {
+	if err = uc.dialogService.Update(ctx, dialogObj); err != nil {
 		return err
 	}
 

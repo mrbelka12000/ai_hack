@@ -24,7 +24,7 @@ type UseCase struct {
 func New(r *repo.Repo, log *slog.Logger, rds *redis.Cache, mlClient *ml.Client) *UseCase {
 	return &UseCase{
 		userService:            user.NewService(r.UserRepo),
-		dialogService:          dialog.NewService(r.DialogRepo),
+		dialogService:          dialog.NewService(r.DialogRepo, rds, log),
 		dialogsMessagesService: dialogmessages.NewService(r.DialogsMessages, mlClient, rds),
 		personalData:           personal_data.New(r.Suggestions),
 
