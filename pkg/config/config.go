@@ -21,8 +21,9 @@ type (
 		ServiceName    string `env:"SERVICE_NAME,required"`
 		HTTPPort       string `env:"HTTP_PORT, default=8081"`
 		PublicURL      string `env:"PUBLIC_URL,required"`
-		CSVFile        string `env:"CSV_FILE,required"`
-		RunMBMigration bool   `env:"RUN_MB_MIGRATION, default=false"`
+		CSVFileMB      string `env:"CSV_FILE_MB,required"`
+		CSVFileRB      string `env:"CSV_FILE_RB,required"`
+		RunMBMigration bool   `env:"RUN_MB_MIGRATION, default=true"`
 	}
 
 	DBConfig struct {

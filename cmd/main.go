@@ -69,7 +69,12 @@ func main() {
 	uc := usecase.New(repository, log, rds, mlClient)
 
 	if cfg.RunMBMigration {
-		if err := uc.StartParseMB(cfg.CSVFile); err != nil {
+		if err := uc.StartParseMB(cfg.CSVFileMB); err != nil {
+			log.Error("failed to start parser", "error", err)
+			return
+		}
+
+		if err := uc.StartParseRB(cfg.CSVFileRB); err != nil {
 			log.Error("failed to start parser", "error", err)
 			return
 		}

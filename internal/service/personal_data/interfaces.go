@@ -8,7 +8,7 @@ import (
 
 type (
 	repo interface {
-		Create(ctx context.Context, obj internal.MB) error
-		GetByCustID(ctx context.Context, custID string) ([]internal.MB, error)
+		Create(ctx context.Context, obj internal.PersonalData) error
+		GetByCustID(ctx context.Context, custID string) ([]internal.PersonalData, error)
 	}
 )

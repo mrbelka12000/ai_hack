@@ -33,5 +33,9 @@ func New(r *repo.Repo, log *slog.Logger, rds *redis.Cache, mlClient *ml.Client) 
 }
 
 func (uc *UseCase) StartParseMB(filePath string) error {
-	return uc.mbService.StartParse(filePath)
+	return uc.mbService.StartParseMB(filePath)
+}
+
+func (uc *UseCase) StartParseRB(filePath string) error {
+	return uc.mbService.StartParseRB(filePath)
 }

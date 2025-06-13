@@ -21,7 +21,7 @@ func New(repo repo) *Service {
 	}
 }
 
-func (s *Service) StartParse(filePath string) error {
+func (s *Service) StartParseMB(filePath string) error {
 	file, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
@@ -42,25 +42,82 @@ func (s *Service) StartParse(filePath string) error {
 			continue
 		}
 
-		val := strings.Split(record[0], ";")
+		row := strings.Split(record[0], ";")
 
-		mb := internal.MB{
-			ID:         trimQuotes(getValue(val, 0)),
-			CustID:     trimQuotes(getValue(val, 9)),
-			Acct:       trimQuotes(getValue(val, 12)),
-			Br:         trimQuotes(getValue(val, 13)),
-			Segment:    trimQuotes(getValue(val, 15)),
-			Product:    trimQuotes(getValue(val, 16)),
-			ContCode:   trimQuotes(getValue(val, 17)),
-			ContType:   trimQuotes(getValue(val, 18)),
-			DocNum:     ptr(trimQuotes(getValue(val, 19))),
-			SubsLoanTo: ptr(trimQuotes(getValue(val, 25))),
-			LineType:   ptr(trimQuotes(getValue(val, 29))),
-			EndDate:    ptr(trimQuotes(getValue(val, 33))),
-			AmtTng:     ptr(trimQuotes(getValue(val, 37))),
-			OdTng:      ptr(trimQuotes(getValue(val, 41))),
-			Stav:       ptr(trimQuotes(getValue(val, 48))),
-			DayPrPr:    ptr(trimQuotes(getValue(val, 51))),
+		mb := internal.PersonalData{
+			CallID:        trimQuotes(getValue(row, 0)),
+			PhoneNumber:   "-",
+			Br:            trimQuotes(getValue(row, 13)),
+			Currency:      trimQuotes(getValue(row, 31)),
+			BegDate:       trimQuotes(getValue(row, 32)),
+			EndDate:       trimQuotes(getValue(row, 33)),
+			ProlDate:      trimQuotes(getValue(row, 34)),
+			ProlCount:     trimQuotes(getValue(row, 35)),
+			Amt:           trimQuotes(getValue(row, 36)),
+			AmtTng:        trimQuotes(getValue(row, 37)),
+			Od:            trimQuotes(getValue(row, 38)),
+			PrOd:          trimQuotes(getValue(row, 39)),
+			DayPrOd:       trimQuotes(getValue(row, 40)),
+			Pog:           trimQuotes(getValue(row, 47)),
+			Stav:          trimQuotes(getValue(row, 48)),
+			Sht:           trimQuotes(getValue(row, 57)),
+			BrVyd:         trimQuotes(getValue(row, 84)),
+			FlWork:        trimQuotes(getValue(row, 88)),
+			RateEffective: trimQuotes(getValue(row, 139)),
+		}
+
+		if err := s.repo.Create(context.Background(), mb); err != nil {
+			fmt.Println("Skipping row due to error:", err)
+			continue
+		}
+	}
+
+	return nil
+}
+
+func (s *Service) StartParseRB(filePath string) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	reader.LazyQuotes = true
+	reader.FieldsPerRecord = -1
+	//reader.Read()
+	for {
+		record, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			fmt.Println("Skipping row due to error:", err)
+			continue
+		}
+
+		row := strings.Split(record[0], ";")
+
+		mb := internal.PersonalData{
+			CallID:        "-",
+			PhoneNumber:   trimQuotes(getValue(row, 0)),
+			Br:            trimQuotes(getValue(row, 13)),
+			Currency:      trimQuotes(getValue(row, 31)),
+			BegDate:       trimQuotes(getValue(row, 32)),
+			EndDate:       trimQuotes(getValue(row, 33)),
+			ProlDate:      trimQuotes(getValue(row, 34)),
+			ProlCount:     trimQuotes(getValue(row, 35)),
+			Amt:           trimQuotes(getValue(row, 36)),
+			AmtTng:        trimQuotes(getValue(row, 37)),
+			Od:            trimQuotes(getValue(row, 38)),
+			PrOd:          trimQuotes(getValue(row, 39)),
+			DayPrOd:       trimQuotes(getValue(row, 40)),
+			Pog:           trimQuotes(getValue(row, 47)),
+			Stav:          trimQuotes(getValue(row, 48)),
+			Sht:           trimQuotes(getValue(row, 57)),
+			BrVyd:         trimQuotes(getValue(row, 84)),
+			FlWork:        trimQuotes(getValue(row, 88)),
+			RateEffective: trimQuotes(getValue(row, 139)),
 		}
 
 		if err := s.repo.Create(context.Background(), mb); err != nil {
@@ -74,10 +131,6 @@ func (s *Service) StartParse(filePath string) error {
 
 func trimQuotes(s string) string {
 	return strings.Trim(s, `'`)
-}
-
-func ptr(s string) *string {
-	return &s
 }
 
 func getValue(arr []string, ind int) string {
