@@ -7,7 +7,6 @@ import (
 
 	"github.com/google/uuid"
 
-	aihack "github.com/mrbelka12000/ai_hack"
 	"github.com/mrbelka12000/ai_hack/internal"
 	"github.com/mrbelka12000/ai_hack/internal/client/ml"
 	"github.com/mrbelka12000/ai_hack/pkg/validator"
@@ -31,7 +30,7 @@ func NewService(repo repo, mlClient mlClient, cache cache) *Service {
 	}
 }
 
-func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage) (out internal.DialogMessageResponse, err error) {
+func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage, needToGenerate bool) (out internal.DialogMessageResponse, err error) {
 	if err = validator.ValidateStruct(obj); err != nil {
 		return out, err
 	}
@@ -47,7 +46,7 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage) (o
 
 	var resp ml.AnalyzeResponse
 
-	if obj.Role == aihack.RoleClient {
+	if needToGenerate {
 		resp, err = s.mlClient.Analyze(ctx, ml.AnalyzeRequest{
 			DialogId: obj.DialogID.String(),
 			Dialog:   fullDialog,

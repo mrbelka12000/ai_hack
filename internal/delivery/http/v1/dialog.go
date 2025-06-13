@@ -243,3 +243,35 @@ func (h *Handler) DialogList(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(body)
 }
+
+// DialogUpload godoc
+// @Summary      Upload dialog
+// @Tags         dialog
+// @Accept       json
+// @Produce      json
+// @Param        data body internal.DialogMessageResponse    true "Dialog object"
+// @Success      201
+// @Failure      400  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Failure      500  {object}  ErrorResponse
+// @Router       /dialog/full [post]
+// @Security Bearer
+func (h *Handler) DialogUpload(w http.ResponseWriter, r *http.Request) {
+	var obj internal.DialogFull
+	if err := json.NewDecoder(r.Body).Decode(&obj); err != nil {
+		h.errorResponse(w, err, http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	response, err := h.uc.DialogFull(r.Context(), obj)
+	if err != nil {
+		h.errorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		h.errorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
+}
