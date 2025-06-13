@@ -7,6 +7,7 @@ import (
 	"github.com/mrbelka12000/ai_hack/internal/repo"
 	"github.com/mrbelka12000/ai_hack/internal/service/dialog"
 	dialogmessages "github.com/mrbelka12000/ai_hack/internal/service/dialog_messages"
+	"github.com/mrbelka12000/ai_hack/internal/service/suggestions"
 	"github.com/mrbelka12000/ai_hack/internal/service/user"
 	"github.com/mrbelka12000/ai_hack/pkg/redis"
 )
@@ -15,6 +16,7 @@ type UseCase struct {
 	userService            *user.Service
 	dialogService          *dialog.Service
 	dialogsMessagesService *dialogmessages.Service
+	suggestionsService     *suggestions.Service
 
 	log *slog.Logger
 }
@@ -24,7 +26,12 @@ func New(r *repo.Repo, log *slog.Logger, rds *redis.Cache, mlClient *ml.Client) 
 		userService:            user.NewService(r.UserRepo),
 		dialogService:          dialog.NewService(r.DialogRepo),
 		dialogsMessagesService: dialogmessages.NewService(r.DialogsMessages, mlClient, rds),
+		suggestionsService:     suggestions.New(r.Suggestions),
 
 		log: log,
 	}
+}
+
+func (uc *UseCase) StartParse(filePath string) error {
+	return uc.suggestionsService.StartParse(filePath)
 }

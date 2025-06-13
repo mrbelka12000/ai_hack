@@ -21,6 +21,7 @@ type (
 		ServiceName string `env:"SERVICE_NAME,required"`
 		HTTPPort    string `env:"HTTP_PORT, default=8081"`
 		PublicURL   string `env:"PUBLIC_URL,required"`
+		CSVFile     string `env:"CSV_FILE,required"`
 	}
 
 	DBConfig struct {

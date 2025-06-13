@@ -32,7 +32,7 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      aihack.mrbelka12000.com
+// @host      aiport.mrbelka12000.com
 // @BasePath  /api/v1
 
 // @securityDefinitions.apikey Bearer
@@ -67,6 +67,10 @@ func main() {
 	mlClient := ml.NewClient(cfg.AISuflerAPIURL, log)
 
 	uc := usecase.New(repository, log, rds, mlClient)
+	//if err := uc.StartParse(cfg.CSVFile); err != nil {
+	//	log.Error("failed to start parser", "error", err)
+	//	return
+	//}
 
 	mx := mux.NewRouter()
 	v1.Init(uc, mx, log)
