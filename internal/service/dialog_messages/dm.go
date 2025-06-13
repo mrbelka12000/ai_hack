@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 
+	aihack "github.com/mrbelka12000/ai_hack"
 	"github.com/mrbelka12000/ai_hack/internal"
 	"github.com/mrbelka12000/ai_hack/internal/client/ml"
 	"github.com/mrbelka12000/ai_hack/pkg/validator"
@@ -44,13 +45,17 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage) (o
 
 	fullDialog := constructDialog(messageFromCache, messageToSave)
 
-	resp, err := s.mlClient.Analyze(ctx, ml.AnalyzeRequest{
-		DialogId: obj.DialogID.String(),
-		Dialog:   fullDialog,
-		LoggedIn: obj.IsAnonymous,
-	})
-	if err != nil {
-		return out, err
+	var resp ml.AnalyzeResponse
+
+	if obj.Role == aihack.RoleClient {
+		resp, err = s.mlClient.Analyze(ctx, ml.AnalyzeRequest{
+			DialogId: obj.DialogID.String(),
+			Dialog:   fullDialog,
+			LoggedIn: obj.IsAnonymous,
+		})
+		if err != nil {
+			return out, err
+		}
 	}
 
 	if err = s.cache.Set(obj.DialogID.String(), fullDialog, defaultTTL); err != nil {
