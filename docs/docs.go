@@ -630,8 +630,7 @@ const docTemplate = `{
         "internal.DialogMessage": {
             "type": "object",
             "required": [
-                "message",
-                "role"
+                "message"
             ],
             "properties": {
                 "dialog_id": {
@@ -639,9 +638,6 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
-                },
-                "role": {
-                    "$ref": "#/definitions/ai_hack.Role"
                 }
             }
         },
