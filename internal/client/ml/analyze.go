@@ -23,7 +23,7 @@ type (
 		RelativeQuestions []string `json:"relative_questions"`
 		DatabaseFile      string   `json:"database_file"`
 		DatabaseFilePart  string   `json:"database_file_part"`
-		Confidence        int      `json:"confidence"`
+		Confidence        float64  `json:"confidence"`
 	}
 )
 
