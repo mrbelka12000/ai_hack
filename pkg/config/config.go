@@ -21,8 +21,8 @@ type (
 		ServiceName    string `env:"SERVICE_NAME,required"`
 		HTTPPort       string `env:"HTTP_PORT, default=8081"`
 		PublicURL      string `env:"PUBLIC_URL,required"`
-		CSVFileMB      string `env:"CSV_FILE_MB,required"`
-		CSVFileRB      string `env:"CSV_FILE_RB,required"`
+		CSVFileMB      string `env:"CSV_FILE_MB, default=DBZURRESULTFinal_utf8.csv"`
+		CSVFileRB      string `env:"CSV_FILE_RB, default=resultfizFinal_utf8.csv"`
 		RunMBMigration bool   `env:"RUN_MB_MIGRATION, default=true"`
 	}
 
