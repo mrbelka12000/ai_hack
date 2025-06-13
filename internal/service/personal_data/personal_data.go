@@ -1,4 +1,4 @@
-package mb
+package personal_data
 
 import (
 	"context"

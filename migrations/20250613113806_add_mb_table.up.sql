@@ -1,8 +1,9 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS personal_data(
-    id VARCHAR NOT NULL,
-    br VARCHAR NOT NULL,
+    call_id VARCHAR,
+    phone_number VARCHAR,
+    br VARCHAR,
     currency VARCHAR,
     beg_date VARCHAR,
     env_date VARCHAR,
