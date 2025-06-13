@@ -113,8 +113,11 @@ func (h *Handler) DialogAddMessage(w http.ResponseWriter, r *http.Request) {
 
 	user, ok := r.Context().Value(userKey).(internal.User)
 	role := user.Role
+	obj.IsAnonymous = false
+
 	if !ok {
 		role = aihack.RoleClient
+		obj.IsAnonymous = true
 	}
 
 	obj.Role = role
