@@ -61,7 +61,7 @@ func main() {
 	rds, err := redis.New(cfg)
 	if err != nil {
 		log.With("error", err).Error("failed to connect to redis")
-		//return
+		return
 	}
 
 	mlClient := ml.NewClient(cfg.AISuflerAPIURL, log)
