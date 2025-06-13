@@ -29,7 +29,7 @@ type (
 
 func (c *Client) Analyze(ctx context.Context, req AnalyzeRequest) (out AnalyzeResponse, err error) {
 
-	statusCode, err := c.do(ctx, req, out, c.apiURL+analyzeEndPoint, http.MethodPost)
+	statusCode, err := c.do(ctx, req, &out, c.apiURL+analyzeEndPoint, http.MethodPost)
 	if err != nil {
 		return out, err
 	}
