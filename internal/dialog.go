@@ -25,6 +25,10 @@ type (
 		Status     aihack.DialogStatus `gorm:"column:status" json:"status,omitempty"`
 		CreatedAt  time.Time           `gorm:"column:created_at" json:"created_at"`
 
+		RawData []byte `gorm:"type:text;column:raw_data" json:"-"`
+
+		Data *DialogMessageResponse `json:"data,omitempty" gorm:"-"`
+
 		DialogsMessages []DialogMessage `gorm:"-" json:"dialogs_messages"`
 	}
 
@@ -46,5 +50,9 @@ type (
 	DialogFull struct {
 		PhoneNumber string `json:"phone_number"`
 		Message     string `json:"message"`
+	}
+
+	DialogCreateResponse struct {
+		ID uuid.UUID `json:"id"`
 	}
 )

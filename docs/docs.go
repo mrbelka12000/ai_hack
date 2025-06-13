@@ -13,7 +13,7 @@ const docTemplate = `{
         "contact": {
             "name": "API Support",
             "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
+            "email": "karshyga.beknur@gmail.com"
         },
         "license": {
             "name": "Apache 2.0",
@@ -59,7 +59,8 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "search by limit",
                         "name": "limit",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -74,6 +75,52 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/internal.DialogListResponse"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dialog"
+                ],
+                "summary": "Update dialog",
+                "parameters": [
+                    {
+                        "description": "Dialog object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal.Dialog"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -126,7 +173,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal.DialogMessageResponse"
+                            "$ref": "#/definitions/internal.DialogCreateResponse"
                         }
                     },
                     "400": {
@@ -218,58 +265,21 @@ const docTemplate = `{
                     "dialog"
                 ],
                 "summary": "Get dialog",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Dialog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/internal.Dialog"
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/v1.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/v1.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/v1.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "dialog"
-                ],
-                "summary": "Update dialog",
-                "parameters": [
-                    {
-                        "description": "Dialog object",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/internal.DialogCU"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -302,6 +312,15 @@ const docTemplate = `{
                     "dialog"
                 ],
                 "summary": "Delete dialog",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Dialog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -357,10 +376,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/internal.DialogMessageResponse"
-                        }
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -676,6 +692,9 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "data": {
+                    "$ref": "#/definitions/internal.DialogMessageResponse"
+                },
                 "dialogs_messages": {
                     "type": "array",
                     "items": {
@@ -704,6 +723,14 @@ const docTemplate = `{
                 }
             }
         },
+        "internal.DialogCreateResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "internal.DialogFull": {
             "type": "object",
             "properties": {
@@ -726,6 +753,9 @@ const docTemplate = `{
                 },
                 "created_at": {
                     "type": "string"
+                },
+                "data": {
+                    "$ref": "#/definitions/internal.DialogMessageResponse"
                 },
                 "dialogs_messages": {
                     "type": "array",
@@ -756,7 +786,8 @@ const docTemplate = `{
         "internal.DialogMessage": {
             "type": "object",
             "required": [
-                "message"
+                "message",
+                "role"
             ],
             "properties": {
                 "dialog_id": {
@@ -764,6 +795,9 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/ai_hack.Role"
                 }
             }
         },
@@ -926,7 +960,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "aihack.mrbelka12000.com",
+	Host:             "localhost:8085",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Swagger Example API",

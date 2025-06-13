@@ -24,16 +24,16 @@ func (r *Repo) Create(ctx context.Context, obj internal.DialogCU) error {
 }
 
 func (r *Repo) Update(ctx context.Context, obj internal.Dialog) error {
-	return r.db.WithContext(ctx).Table("dialogs").Model(&internal.Dialog{}).Where("uuid = ?", obj.ID).Updates(obj).Error
+	return r.db.WithContext(ctx).Table("dialogs").Model(&internal.Dialog{}).Where("id = ?", obj.ID).Updates(obj).Error
 }
 
 func (r *Repo) Delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.WithContext(ctx).Table("dialogs").Where("uuid = ?", id).Delete(&internal.Dialog{}).Error
+	return r.db.WithContext(ctx).Table("dialogs").Where("id = ?", id).Delete(&internal.Dialog{}).Error
 }
 
 func (r *Repo) Get(ctx context.Context, id uuid.UUID) (internal.Dialog, error) {
 	var d internal.Dialog
-	err := r.db.WithContext(ctx).Table("dialogs").Where("uuid = ?", id).First(&d).Error
+	err := r.db.WithContext(ctx).Table("dialogs").Where("id = ?", id).First(&d).Error
 	return d, err
 }
 

@@ -2,7 +2,6 @@ package v1
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -18,8 +17,8 @@ import (
 // @Tags         dialog
 // @Accept       json
 // @Produce      json
-// @Param        data body internal.DialogCU     true "Dialog object"
-// @Success      201  {object} internal.DialogMessageResponse
+// @Param        data  body     internal.DialogCU     true "Dialog object"
+// @Success      201  {object}  internal.DialogCreateResponse
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
 // @Failure      500  {object}  ErrorResponse
@@ -39,20 +38,20 @@ func (h *Handler) DialogCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, ok := r.Context().Value(userKey).(internal.User)
+	obj.ClientID = user.ID
 	if !ok {
-		h.errorResponse(w, errors.New(http.StatusText(http.StatusUnauthorized)), http.StatusUnauthorized)
-		return
+		obj.ClientID = 1
 	}
 
-	obj.ClientID = user.ID
-
-	response, err := h.uc.DialogCreate(r.Context(), obj)
+	id, err := h.uc.DialogCreate(r.Context(), obj)
 	if err != nil {
 		h.errorResponse(w, err, http.StatusBadRequest)
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(response); err != nil {
+	if err := json.NewEncoder(w).Encode(internal.DialogCreateResponse{
+		ID: id,
+	}); err != nil {
 		h.errorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
@@ -63,6 +62,7 @@ func (h *Handler) DialogCreate(w http.ResponseWriter, r *http.Request) {
 // @Tags         dialog
 // @Accept       json
 // @Produce      json
+// @Param        id   path	 	string  true  "Dialog ID"
 // @Success      200  {object}	internal.Dialog
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
@@ -97,7 +97,7 @@ func (h *Handler) DialogGet(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Param        data body internal.DialogMessage    true "DialogMessage object"
-// @Success      200  {object}  internal.DialogMessageResponse
+// @Success      200
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
 // @Failure      500  {object}  ErrorResponse
@@ -113,11 +113,11 @@ func (h *Handler) DialogAddMessage(w http.ResponseWriter, r *http.Request) {
 
 	user, ok := r.Context().Value(userKey).(internal.User)
 	role := user.Role
-	obj.IsAnonymous = false
+	obj.IsLoggedIn = true
 
 	if !ok {
 		role = aihack.RoleClient
-		obj.IsAnonymous = true
+		obj.IsLoggedIn = false
 	}
 
 	obj.Role = role
@@ -127,16 +127,11 @@ func (h *Handler) DialogAddMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := h.uc.DialogAddMessage(r.Context(), obj)
-	if err != nil {
+	if err := h.uc.DialogAddMessage(r.Context(), obj); err != nil {
 		h.errorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(resp); err != nil {
-		h.errorResponse(w, err, http.StatusInternalServerError)
-		return
-	}
 }
 
 // DialogUpdate godoc
@@ -144,12 +139,12 @@ func (h *Handler) DialogAddMessage(w http.ResponseWriter, r *http.Request) {
 // @Tags         dialog
 // @Accept       json
 // @Produce      json
-// @Param        data body internal.DialogCU    true "Dialog object"
+// @Param        data body internal.Dialog    true "Dialog object"
 // @Success      200
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
 // @Failure      500  {object}  ErrorResponse
-// @Router       /dialog/{id} [put]
+// @Router       /dialog [put]
 func (h *Handler) DialogUpdate(w http.ResponseWriter, r *http.Request) {
 	var obj internal.Dialog
 	if err := json.NewDecoder(r.Body).Decode(&obj); err != nil {
@@ -176,6 +171,7 @@ func (h *Handler) DialogUpdate(w http.ResponseWriter, r *http.Request) {
 // @Tags         dialog
 // @Accept       json
 // @Produce      json
+// @Param        id   path	 	string  true  "Dialog ID"
 // @Success      204
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
@@ -205,7 +201,7 @@ func (h *Handler) DialogDelete(w http.ResponseWriter, r *http.Request) {
 // @Param        client_id    query     int  false  "search by client_id"
 // @Param        operator_id    query     int  false  "search by operator_id"
 // @Param        status    query     string  false  "search by status"
-// @Param        limit    query     int  false  "search by limit"
+// @Param        limit    query     int  true  "search by limit"
 // @Param        offset    query     string  false  "search by offset"
 // @Success      200  {object}	internal.DialogListResponse
 // @Failure      400  {object}  ErrorResponse

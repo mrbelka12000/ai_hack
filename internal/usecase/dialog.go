@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"regexp"
 	"strings"
 	"time"
@@ -24,27 +26,41 @@ func (uc *UseCase) DialogUpdate(ctx context.Context, obj internal.Dialog) error 
 	return uc.dialogService.Update(ctx, obj)
 }
 
-func (uc *UseCase) DialogCreate(ctx context.Context, obj internal.DialogCU) (out internal.DialogMessageResponse, err error) {
-	dialogID, err := uc.dialogService.Create(ctx, obj)
+func (uc *UseCase) DialogCreate(ctx context.Context, obj internal.DialogCU) (id uuid.UUID, err error) {
+	obj.ID = uuid.New()
+
+	err = uc.dialogService.Create(ctx, obj)
 	if err != nil {
-		return out, err
+		return uuid.Nil, err
 	}
 
-	dmObj := internal.DialogMessage{
-		DialogID:  dialogID,
-		Role:      aihack.RoleClient,
-		Message:   obj.Message,
-		CreatedAt: time.Now().UTC(),
-	}
-
-	response, err := uc.dialogsMessagesService.AddMessage(ctx, dmObj, true)
+	response, err := uc.dialogsMessagesService.AddMessage(ctx, internal.DialogMessage{
+		DialogID:   obj.ID,
+		Role:       aihack.RoleClient,
+		Message:    obj.Message,
+		IsLoggedIn: obj.ClientID != 1,
+		CreatedAt:  time.Now().UTC(),
+	}, true)
 	if err != nil {
-		return out, err
+		return uuid.Nil, err
 	}
 
-	response.DialogID = dialogID
+	fmt.Println(response)
+	rawData, err := json.Marshal(response)
+	if err != nil {
+		return uuid.Nil, err
+	}
 
-	return response, nil
+	dialog := internal.Dialog{
+		ID:      obj.ID,
+		RawData: rawData,
+	}
+
+	if err := uc.dialogService.Update(ctx, dialog); err != nil {
+		return uuid.Nil, err
+	}
+
+	return obj.ID, nil
 }
 
 func (uc *UseCase) DialogList(ctx context.Context, pars internal.DialogPars) ([]internal.Dialog, error) {
@@ -65,8 +81,31 @@ func (uc *UseCase) DialogList(ctx context.Context, pars internal.DialogPars) ([]
 	return response, nil
 }
 
-func (uc *UseCase) DialogAddMessage(ctx context.Context, obj internal.DialogMessage) (internal.DialogMessageResponse, error) {
-	return uc.dialogsMessagesService.AddMessage(ctx, obj, obj.Role == aihack.RoleClient)
+func (uc *UseCase) DialogAddMessage(ctx context.Context, obj internal.DialogMessage) error {
+	response, err := uc.dialogsMessagesService.AddMessage(ctx, obj, obj.Role == aihack.RoleClient)
+	if err != nil {
+		return err
+	}
+
+	if obj.Role == aihack.RoleOperator {
+		return nil
+	}
+	
+	rawData, err := json.Marshal(response)
+	if err != nil {
+		return err
+	}
+
+	dialog := internal.Dialog{
+		ID:      obj.DialogID,
+		RawData: rawData,
+	}
+
+	if err = uc.dialogService.Update(ctx, dialog); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (uc *UseCase) DialogFull(ctx context.Context, obj internal.DialogFull) (out internal.DialogMessageResponse, err error) {
@@ -76,17 +115,18 @@ func (uc *UseCase) DialogFull(ctx context.Context, obj internal.DialogFull) (out
 	if err != nil {
 		return out, err
 	}
-
-	dialogID, err := uc.dialogService.Create(ctx, internal.DialogCU{
+	dialogCU := internal.DialogCU{
+		ID:        uuid.New(),
 		ClientID:  user.ID,
 		Status:    aihack.DialogStatusOpen,
 		CreatedAt: time.Now().UTC(),
-	})
-	if err != nil {
+	}
+
+	if err = uc.dialogService.Create(ctx, dialogCU); err != nil {
 		return out, err
 	}
 
-	dialogMessages := parseFullDialog(obj.Message, dialogID)
+	dialogMessages := parseFullDialog(obj.Message, dialogCU.ID)
 
 	var response internal.DialogMessageResponse
 	for _, message := range dialogMessages {
@@ -128,10 +168,11 @@ func parseFullDialog(message string, dialogID uuid.UUID) []internal.DialogMessag
 		}
 
 		result = append(result, internal.DialogMessage{
-			DialogID:  dialogID,
-			Role:      role,
-			Message:   strings.TrimSpace(message[start:end]),
-			CreatedAt: time.Now().UTC(),
+			DialogID:   dialogID,
+			Role:       role,
+			IsLoggedIn: true,
+			Message:    strings.TrimSpace(message[start:end]),
+			CreatedAt:  time.Now().UTC(),
 		})
 	}
 

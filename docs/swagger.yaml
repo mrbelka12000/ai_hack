@@ -24,6 +24,8 @@ definitions:
         type: integer
       created_at:
         type: string
+      data:
+        $ref: '#/definitions/internal.DialogMessageResponse'
       dialogs_messages:
         items:
           $ref: '#/definitions/internal.DialogMessage'
@@ -42,6 +44,11 @@ definitions:
     required:
     - message
     type: object
+  internal.DialogCreateResponse:
+    properties:
+      id:
+        type: string
+    type: object
   internal.DialogFull:
     properties:
       message:
@@ -55,6 +62,8 @@ definitions:
         type: integer
       created_at:
         type: string
+      data:
+        $ref: '#/definitions/internal.DialogMessageResponse'
       dialogs_messages:
         items:
           $ref: '#/definitions/internal.DialogMessage'
@@ -80,8 +89,11 @@ definitions:
         type: string
       message:
         type: string
+      role:
+        $ref: '#/definitions/ai_hack.Role'
     required:
     - message
+    - role
     type: object
   internal.DialogMessageResponse:
     properties:
@@ -177,10 +189,10 @@ definitions:
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
-host: aihack.mrbelka12000.com
+host: localhost:8085
 info:
   contact:
-    email: support@swagger.io
+    email: karshyga.beknur@gmail.com
     name: API Support
     url: http://www.swagger.io/support
   description: This is a sample server celler server.
@@ -211,6 +223,7 @@ paths:
       - description: search by limit
         in: query
         name: limit
+        required: true
         type: integer
       - description: search by offset
         in: query
@@ -254,7 +267,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal.DialogMessageResponse'
+            $ref: '#/definitions/internal.DialogCreateResponse'
         "400":
           description: Bad Request
           schema:
@@ -272,10 +285,46 @@ paths:
       summary: Create dialog
       tags:
       - dialog
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Dialog object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal.Dialog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Update dialog
+      tags:
+      - dialog
   /dialog/{id}:
     delete:
       consumes:
       - application/json
+      parameters:
+      - description: Dialog ID
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -299,6 +348,12 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: Dialog ID
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -319,36 +374,6 @@ paths:
           schema:
             $ref: '#/definitions/v1.ErrorResponse'
       summary: Get dialog
-      tags:
-      - dialog
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Dialog object
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/internal.DialogCU'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/v1.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.ErrorResponse'
-      summary: Update dialog
       tags:
       - dialog
   /dialog/full:
@@ -402,8 +427,6 @@ paths:
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/internal.DialogMessageResponse'
         "400":
           description: Bad Request
           schema:

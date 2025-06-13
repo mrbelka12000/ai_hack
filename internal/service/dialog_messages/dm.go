@@ -50,7 +50,7 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage, ne
 		resp, err = s.mlClient.Analyze(ctx, ml.AnalyzeRequest{
 			DialogId: obj.DialogID.String(),
 			Dialog:   fullDialog,
-			LoggedIn: obj.IsAnonymous,
+			LoggedIn: obj.IsLoggedIn,
 		})
 		if err != nil {
 			return out, err
@@ -59,6 +59,10 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage, ne
 
 	if err = s.cache.Set(obj.DialogID.String(), fullDialog, defaultTTL); err != nil {
 		return out, err
+	}
+
+	if resp.Error != "" {
+		resp.Message = resp.Error
 	}
 
 	return internal.DialogMessageResponse{

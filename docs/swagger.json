@@ -7,7 +7,7 @@
         "contact": {
             "name": "API Support",
             "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
+            "email": "karshyga.beknur@gmail.com"
         },
         "license": {
             "name": "Apache 2.0",
@@ -15,7 +15,7 @@
         },
         "version": "1.0"
     },
-    "host": "aihack.mrbelka12000.com",
+    "host": "localhost:8085",
     "basePath": "/api/v1",
     "paths": {
         "/dialog": {
@@ -53,7 +53,8 @@
                         "type": "integer",
                         "description": "search by limit",
                         "name": "limit",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -68,6 +69,52 @@
                         "schema": {
                             "$ref": "#/definitions/internal.DialogListResponse"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dialog"
+                ],
+                "summary": "Update dialog",
+                "parameters": [
+                    {
+                        "description": "Dialog object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal.Dialog"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -120,7 +167,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal.DialogMessageResponse"
+                            "$ref": "#/definitions/internal.DialogCreateResponse"
                         }
                     },
                     "400": {
@@ -212,58 +259,21 @@
                     "dialog"
                 ],
                 "summary": "Get dialog",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Dialog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/internal.Dialog"
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/v1.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/v1.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/v1.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "dialog"
-                ],
-                "summary": "Update dialog",
-                "parameters": [
-                    {
-                        "description": "Dialog object",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/internal.DialogCU"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -296,6 +306,15 @@
                     "dialog"
                 ],
                 "summary": "Delete dialog",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Dialog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -351,10 +370,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/internal.DialogMessageResponse"
-                        }
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -670,6 +686,9 @@
                 "created_at": {
                     "type": "string"
                 },
+                "data": {
+                    "$ref": "#/definitions/internal.DialogMessageResponse"
+                },
                 "dialogs_messages": {
                     "type": "array",
                     "items": {
@@ -698,6 +717,14 @@
                 }
             }
         },
+        "internal.DialogCreateResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "internal.DialogFull": {
             "type": "object",
             "properties": {
@@ -720,6 +747,9 @@
                 },
                 "created_at": {
                     "type": "string"
+                },
+                "data": {
+                    "$ref": "#/definitions/internal.DialogMessageResponse"
                 },
                 "dialogs_messages": {
                     "type": "array",
@@ -750,7 +780,8 @@
         "internal.DialogMessage": {
             "type": "object",
             "required": [
-                "message"
+                "message",
+                "role"
             ],
             "properties": {
                 "dialog_id": {
@@ -758,6 +789,9 @@
                 },
                 "message": {
                     "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/ai_hack.Role"
                 }
             }
         },

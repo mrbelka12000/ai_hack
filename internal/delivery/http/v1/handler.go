@@ -33,6 +33,7 @@ func Init(uc *usecase.UseCase, mx *mux.Router, log *slog.Logger) {
 	}
 	mx.Use(CORSMiddleware)
 	mx.Use(h.AuthMiddleware)
+	mx.Use(utility)
 
 	mx.PathPrefix("/documentation/").Handler(CORSMiddleware(httpSwagger.WrapHandler))
 

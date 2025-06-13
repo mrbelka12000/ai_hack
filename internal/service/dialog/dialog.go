@@ -2,6 +2,7 @@ package dialog
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/google/uuid"
 
@@ -20,10 +21,8 @@ func NewService(repo repo) *Service {
 	}
 }
 
-func (s *Service) Create(ctx context.Context, obj internal.DialogCU) (uuid.UUID, error) {
-	obj.ID = uuid.New()
-	err := s.repo.Create(ctx, obj)
-	return obj.ID, err
+func (s *Service) Create(ctx context.Context, obj internal.DialogCU) error {
+	return s.repo.Create(ctx, obj)
 }
 
 func (s *Service) Update(ctx context.Context, obj internal.Dialog) error {
@@ -35,7 +34,16 @@ func (s *Service) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 func (s *Service) Get(ctx context.Context, id uuid.UUID) (internal.Dialog, error) {
-	return s.repo.Get(ctx, id)
+	obj, err := s.repo.Get(ctx, id)
+	if err != nil {
+		return internal.Dialog{}, err
+	}
+
+	if err := json.Unmarshal(obj.RawData, &obj.Data); err != nil {
+		return internal.Dialog{}, err
+	}
+
+	return obj, nil
 }
 
 func (s *Service) List(ctx context.Context, pars internal.DialogPars) ([]internal.Dialog, error) {
