@@ -15,8 +15,10 @@ CREATE TABLE IF NOT EXISTS personal_data(
     day_pr_od VARCHAR,
     pgg VARCHAR,
     stav VARCHAR,
-    sht VARCHAR
-
+    sht VARCHAR,
+    br_vyd VARCHAR,
+    flwork VARCHAR,
+    rate_effective VARCHAR
 );
 -- +goose StatementEnd
 

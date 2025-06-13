@@ -144,7 +144,7 @@ func (h *Handler) UsersList(w http.ResponseWriter, r *http.Request) {
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
 // @Failure      500  {object}  ErrorResponse
-// @Router       /profile [post]
+// @Router       /profile [get]
 // @Security 	 Bearer
 func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {
 	user, ok := r.Context().Value(userKey).(internal.User)
