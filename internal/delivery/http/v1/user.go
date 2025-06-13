@@ -2,6 +2,7 @@ package v1
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/mrbelka12000/ai_hack/internal"
@@ -138,9 +139,29 @@ func (h *Handler) UsersList(w http.ResponseWriter, r *http.Request) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Success      200
+// @Success      200  {object}  internal.User
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
 // @Failure      500  {object}  ErrorResponse
 // @Router       /profile [post]
-func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {}
+// @Security Bearer
+func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {
+	user, ok := r.Context().Value(userKey).(internal.User)
+	if !ok {
+		h.errorResponse(w, errors.New(http.StatusText(http.StatusUnauthorized)), http.StatusUnauthorized)
+		return
+	}
+
+	response, err := h.uc.UserGet(r.Context(), internal.UserGetPars{
+		ID: user.ID,
+	})
+	if err != nil {
+		h.errorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		h.errorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
+}
