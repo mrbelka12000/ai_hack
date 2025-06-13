@@ -14,7 +14,6 @@ func CORSMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Headers", "*")
 		w.Header().Set("Access-Control-Expose-Headers", "Authorization")
 
-		fmt.Println(r.URL.Path)
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
 			return
