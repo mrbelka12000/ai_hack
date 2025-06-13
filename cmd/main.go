@@ -9,12 +9,14 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/mrbelka12000/ai_hack/internal/client/ml"
 	v1 "github.com/mrbelka12000/ai_hack/internal/delivery/http/v1"
 	"github.com/mrbelka12000/ai_hack/internal/repo"
 	"github.com/mrbelka12000/ai_hack/internal/usecase"
 	"github.com/mrbelka12000/ai_hack/migrations"
 	"github.com/mrbelka12000/ai_hack/pkg/config"
 	"github.com/mrbelka12000/ai_hack/pkg/gorm/postgres"
+	"github.com/mrbelka12000/ai_hack/pkg/redis"
 	"github.com/mrbelka12000/ai_hack/pkg/server"
 )
 
@@ -56,7 +58,15 @@ func main() {
 	migrations.RunMigrations(db)
 
 	repository := repo.New(db)
-	uc := usecase.New(repository, log)
+	rds, err := redis.New(cfg)
+	if err != nil {
+		log.With("error", err).Error("failed to connect to redis")
+		return
+	}
+
+	mlClient := ml.NewClient(cfg.AISuflerAPIURL, log)
+
+	uc := usecase.New(repository, log, rds, mlClient)
 
 	mx := mux.NewRouter()
 	v1.Init(uc, mx, log)

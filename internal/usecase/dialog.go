@@ -29,13 +29,14 @@ func (uc *UseCase) DialogCreate(ctx context.Context, obj internal.DialogCU) (uui
 	}
 
 	dmObj := internal.DialogMessage{
-		DialogUUID: dialogID,
-		Role:       aihack.RoleClient,
-		Message:    obj.Message,
-		CreatedAt:  time.Now().UTC(),
+		DialogID:  dialogID,
+		Role:      aihack.RoleClient,
+		Message:   obj.Message,
+		CreatedAt: time.Now().UTC(),
 	}
 
-	if err = uc.dialogsMessagesService.AddMessage(ctx, dmObj); err != nil {
+	_, err = uc.dialogsMessagesService.AddMessage(ctx, dmObj)
+	if err != nil {
 		return uuid.Nil, err
 	}
 
@@ -60,6 +61,6 @@ func (uc *UseCase) DialogList(ctx context.Context, pars internal.DialogPars) ([]
 	return response, nil
 }
 
-func (uc *UseCase) DialogAddMessage(ctx context.Context, obj internal.DialogMessage) error {
+func (uc *UseCase) DialogAddMessage(ctx context.Context, obj internal.DialogMessage) (internal.DialogMessageResponse, error) {
 	return uc.dialogsMessagesService.AddMessage(ctx, obj)
 }

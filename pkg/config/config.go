@@ -28,6 +28,7 @@ type (
 	}
 
 	ClientsConfig struct {
+		AISuflerAPIURL string `env:"AI_SUFLER_API_URL,required"`
 	}
 
 	RedisConfig struct {

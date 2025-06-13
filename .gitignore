@@ -1,2 +1,6 @@
 .idea
 .env
+docker-compose.yaml
+entrypoint.sh
+init-multiple-databases.sh
+pgdata
