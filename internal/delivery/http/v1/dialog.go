@@ -114,11 +114,6 @@ func (h *Handler) DialogAddMessage(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if err := validator.ValidateStruct(obj); err != nil {
-		h.errorResponse(w, err, http.StatusBadRequest)
-		return
-	}
-
 	user, ok := r.Context().Value(userKey).(internal.User)
 	role := user.Role
 	if !ok {
@@ -126,6 +121,11 @@ func (h *Handler) DialogAddMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	obj.Role = role
+
+	if err := validator.ValidateStruct(obj); err != nil {
+		h.errorResponse(w, err, http.StatusBadRequest)
+		return
+	}
 
 	resp, err := h.uc.DialogAddMessage(r.Context(), obj)
 	if err != nil {
