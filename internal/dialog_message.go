@@ -18,7 +18,7 @@ type (
 	}
 
 	DialogMessageResponse struct {
-		Message           string
+		Message           string   `json:"message"`
 		RelativeQuestions []string `json:"relative_questions"`
 		DatabaseFile      string   `json:"database_file"`
 		DatabaseFilePart  string   `json:"database_file_part"`
