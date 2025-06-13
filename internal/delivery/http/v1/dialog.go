@@ -133,7 +133,6 @@ func (h *Handler) DialogAddMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
 	if err = json.NewEncoder(w).Encode(resp); err != nil {
 		h.errorResponse(w, err, http.StatusInternalServerError)
 		return
