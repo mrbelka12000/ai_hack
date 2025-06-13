@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
+	aihack "github.com/mrbelka12000/ai_hack"
 	"github.com/mrbelka12000/ai_hack/internal"
 )
 
@@ -65,8 +66,14 @@ func castClaims(claims map[string]interface{}) (internal.User, error) {
 		return internal.User{}, errors.New("invalid token")
 	}
 
+	role, ok := claims["role"].(aihack.Role)
+	if !ok {
+		return internal.User{}, errors.New("invalid role")
+	}
+
 	return internal.User{
 		ID:    int64(id),
 		Email: email,
+		Role:  role,
 	}, nil
 }
