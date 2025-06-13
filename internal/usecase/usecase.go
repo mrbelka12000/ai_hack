@@ -16,7 +16,7 @@ type UseCase struct {
 	userService            *user.Service
 	dialogService          *dialog.Service
 	dialogsMessagesService *dialogmessages.Service
-	mbService              *personal_data.Service
+	personalData           *personal_data.Service
 
 	log *slog.Logger
 }
@@ -26,16 +26,16 @@ func New(r *repo.Repo, log *slog.Logger, rds *redis.Cache, mlClient *ml.Client) 
 		userService:            user.NewService(r.UserRepo),
 		dialogService:          dialog.NewService(r.DialogRepo),
 		dialogsMessagesService: dialogmessages.NewService(r.DialogsMessages, mlClient, rds),
-		mbService:              personal_data.New(r.Suggestions),
+		personalData:           personal_data.New(r.Suggestions),
 
 		log: log,
 	}
 }
 
 func (uc *UseCase) StartParseMB(filePath string) error {
-	return uc.mbService.StartParseMB(filePath)
+	return uc.personalData.StartParseMB(filePath)
 }
 
 func (uc *UseCase) StartParseRB(filePath string) error {
-	return uc.mbService.StartParseRB(filePath)
+	return uc.personalData.StartParseRB(filePath)
 }

@@ -23,7 +23,7 @@ type (
 		PublicURL      string `env:"PUBLIC_URL,required"`
 		CSVFileMB      string `env:"CSV_FILE_MB, default=DBZURRESULTFinal_utf8.csv"`
 		CSVFileRB      string `env:"CSV_FILE_RB, default=resultfizFinal_utf8.csv"`
-		RunMBMigration bool   `env:"RUN_MB_MIGRATION, default=true"`
+		RunMBMigration bool   `env:"RUN_MB_MIGRATION, default=false"`
 	}
 
 	DBConfig struct {

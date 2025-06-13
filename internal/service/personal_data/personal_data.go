@@ -129,6 +129,17 @@ func (s *Service) StartParseRB(filePath string) error {
 	return nil
 }
 
+func (s *Service) GetPersonalDataForResponse(ctx context.Context, obj internal.PersonalDataRequest) (internal.PersonalDataResponse, error) {
+	result, err := s.repo.GetPersonalDataForResponse(ctx, obj)
+	if err != nil {
+		return internal.PersonalDataResponse{}, err
+	}
+
+	return internal.PersonalDataResponse{
+		Result: result,
+	}, nil
+}
+
 func trimQuotes(s string) string {
 	return strings.Trim(s, `'`)
 }
