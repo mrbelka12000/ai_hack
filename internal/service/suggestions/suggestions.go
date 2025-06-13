@@ -44,28 +44,23 @@ func (s *Service) StartParse(filePath string) error {
 
 		val := strings.Split(record[0], ";")
 
-		if len(val) < 51 {
-			fmt.Println("Skipping row due to invalid len:", val)
-			continue
-		}
-
 		mb := internal.MB{
-			ID:         trimQuotes(val[0]),
-			CustID:     trimQuotes(val[9]),
-			Acct:       trimQuotes(val[12]),
-			Br:         trimQuotes(val[13]),
-			Segment:    trimQuotes(val[15]),
-			Product:    trimQuotes(val[16]),
-			ContCode:   trimQuotes(val[17]),
-			ContType:   trimQuotes(val[18]),
-			DocNum:     ptr(trimQuotes(val[19])),
-			SubsLoanTo: ptr(trimQuotes(val[25])),
-			LineType:   ptr(trimQuotes(val[29])),
-			EndDate:    ptr(trimQuotes(val[33])),
-			AmtTng:     ptr(trimQuotes(val[37])),
-			OdTng:      ptr(trimQuotes(val[41])),
-			Stav:       ptr(trimQuotes(val[48])),
-			DayPrPr:    ptr(trimQuotes(val[51])),
+			ID:         trimQuotes(getValue(val, 0)),
+			CustID:     trimQuotes(getValue(val, 9)),
+			Acct:       trimQuotes(getValue(val, 12)),
+			Br:         trimQuotes(getValue(val, 13)),
+			Segment:    trimQuotes(getValue(val, 15)),
+			Product:    trimQuotes(getValue(val, 16)),
+			ContCode:   trimQuotes(getValue(val, 17)),
+			ContType:   trimQuotes(getValue(val, 18)),
+			DocNum:     ptr(trimQuotes(getValue(val, 19))),
+			SubsLoanTo: ptr(trimQuotes(getValue(val, 25))),
+			LineType:   ptr(trimQuotes(getValue(val, 29))),
+			EndDate:    ptr(trimQuotes(getValue(val, 33))),
+			AmtTng:     ptr(trimQuotes(getValue(val, 37))),
+			OdTng:      ptr(trimQuotes(getValue(val, 41))),
+			Stav:       ptr(trimQuotes(getValue(val, 48))),
+			DayPrPr:    ptr(trimQuotes(getValue(val, 51))),
 		}
 
 		if err := s.repo.Create(context.Background(), mb); err != nil {
@@ -83,4 +78,12 @@ func trimQuotes(s string) string {
 
 func ptr(s string) *string {
 	return &s
+}
+
+func getValue(arr []string, ind int) string {
+	if ind >= len(arr) {
+		return ""
+	}
+
+	return arr[ind]
 }
