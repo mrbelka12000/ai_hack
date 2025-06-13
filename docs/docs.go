@@ -118,7 +118,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal.DialogCU"
+                            "$ref": "#/definitions/internal.DialogMessageResponse"
                         }
                     }
                 ],
@@ -377,6 +377,11 @@ const docTemplate = `{
         },
         "/profile": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -389,7 +394,10 @@ const docTemplate = `{
                 "summary": "GetProfile",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal.User"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -645,12 +653,15 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "confidence": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "database_file": {
                     "type": "string"
                 },
                 "database_file_part": {
+                    "type": "string"
+                },
+                "dialog_id": {
                     "type": "string"
                 },
                 "message": {
@@ -661,6 +672,23 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "internal.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "role": {
+                    "$ref": "#/definitions/ai_hack.Role"
                 }
             }
         },
@@ -769,7 +797,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "aiport.mrbelka12000.com",
+	Host:             "aihack.mrbelka12000.com",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Swagger Example API",

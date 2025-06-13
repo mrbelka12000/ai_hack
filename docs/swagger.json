@@ -15,7 +15,7 @@
         },
         "version": "1.0"
     },
-    "host": "aiport.mrbelka12000.com",
+    "host": "aihack.mrbelka12000.com",
     "basePath": "/api/v1",
     "paths": {
         "/dialog": {
@@ -112,7 +112,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal.DialogCU"
+                            "$ref": "#/definitions/internal.DialogMessageResponse"
                         }
                     }
                 ],
@@ -371,6 +371,11 @@
         },
         "/profile": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -383,7 +388,10 @@
                 "summary": "GetProfile",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal.User"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -639,12 +647,15 @@
             "type": "object",
             "properties": {
                 "confidence": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "database_file": {
                     "type": "string"
                 },
                 "database_file_part": {
+                    "type": "string"
+                },
+                "dialog_id": {
                     "type": "string"
                 },
                 "message": {
@@ -655,6 +666,23 @@
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "internal.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "role": {
+                    "$ref": "#/definitions/ai_hack.Role"
                 }
             }
         },

@@ -79,10 +79,12 @@ definitions:
   internal.DialogMessageResponse:
     properties:
       confidence:
-        type: integer
+        type: number
       database_file:
         type: string
       database_file_part:
+        type: string
+      dialog_id:
         type: string
       message:
         type: string
@@ -90,6 +92,17 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  internal.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      role:
+        $ref: '#/definitions/ai_hack.Role'
     type: object
   internal.UserCU:
     properties:
@@ -150,7 +163,7 @@ definitions:
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
-host: aiport.mrbelka12000.com
+host: aihack.mrbelka12000.com
 info:
   contact:
     email: support@swagger.io
@@ -220,7 +233,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/internal.DialogCU'
+          $ref: '#/definitions/internal.DialogMessageResponse'
       produces:
       - application/json
       responses:
@@ -399,6 +412,8 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/internal.User'
         "400":
           description: Bad Request
           schema:
@@ -411,6 +426,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/v1.ErrorResponse'
+      security:
+      - Bearer: []
       summary: GetProfile
       tags:
       - user
