@@ -48,6 +48,7 @@ func (c *Client) do(ctx context.Context, in, out any, reqURL, reqMethod string) 
 			fields["error"] = err.Error()
 		}
 
+		c.log.Info("execute request", fields)
 	}()
 
 	requestBody, err = json.Marshal(in)
