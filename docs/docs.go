@@ -483,25 +483,25 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "search by client_id",
-                        "name": "email",
+                        "description": "search by phone_number",
+                        "name": "phone_number",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "search by operator_id",
+                        "description": "search by role",
                         "name": "role",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "search by limit",
+                        "description": "limit",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "search by offset",
+                        "description": "offset",
                         "name": "offset",
                         "in": "query"
                     }
@@ -681,11 +681,11 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
-                "email": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
+                },
+                "phone_number": {
+                    "type": "string"
                 },
                 "role": {
                     "$ref": "#/definitions/ai_hack.Role"
@@ -695,15 +695,15 @@ const docTemplate = `{
         "internal.UserCU": {
             "type": "object",
             "required": [
-                "email",
-                "password",
+                "code",
+                "phone_number",
                 "role"
             ],
             "properties": {
-                "email": {
+                "code": {
                     "type": "string"
                 },
-                "password": {
+                "phone_number": {
                     "type": "string"
                 },
                 "role": {
@@ -728,9 +728,6 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
-                "email": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -743,6 +740,9 @@ const docTemplate = `{
                 "page": {
                     "type": "integer"
                 },
+                "phone_number": {
+                    "type": "string"
+                },
                 "role": {
                     "$ref": "#/definitions/ai_hack.Role"
                 }
@@ -751,14 +751,14 @@ const docTemplate = `{
         "internal.UserLogin": {
             "type": "object",
             "required": [
-                "email",
-                "password"
+                "code",
+                "phone_number"
             ],
             "properties": {
-                "email": {
+                "code": {
                     "type": "string"
                 },
-                "password": {
+                "phone_number": {
                     "type": "string"
                 }
             }

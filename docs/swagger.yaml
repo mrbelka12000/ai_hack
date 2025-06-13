@@ -97,18 +97,18 @@ definitions:
     properties:
       created_at:
         type: string
-      email:
-        type: string
       id:
         type: integer
+      phone_number:
+        type: string
       role:
         $ref: '#/definitions/ai_hack.Role'
     type: object
   internal.UserCU:
     properties:
-      email:
+      code:
         type: string
-      password:
+      phone_number:
         type: string
       role:
         allOf:
@@ -117,15 +117,13 @@ definitions:
         - client
         - operator
     required:
-    - email
-    - password
+    - code
+    - phone_number
     - role
     type: object
   internal.UserListResponse:
     properties:
       created_at:
-        type: string
-      email:
         type: string
       id:
         type: integer
@@ -135,6 +133,8 @@ definitions:
         type: integer
       page:
         type: integer
+      phone_number:
+        type: string
       role:
         $ref: '#/definitions/ai_hack.Role'
     required:
@@ -142,13 +142,13 @@ definitions:
     type: object
   internal.UserLogin:
     properties:
-      email:
+      code:
         type: string
-      password:
+      phone_number:
         type: string
     required:
-    - email
-    - password
+    - code
+    - phone_number
     type: object
   v1.ErrorResponse:
     properties:
@@ -467,19 +467,19 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: search by client_id
+      - description: search by phone_number
         in: query
-        name: email
+        name: phone_number
         type: string
-      - description: search by operator_id
+      - description: search by role
         in: query
         name: role
         type: string
-      - description: search by limit
+      - description: limit
         in: query
         name: limit
         type: integer
-      - description: search by offset
+      - description: offset
         in: query
         name: offset
         type: string
