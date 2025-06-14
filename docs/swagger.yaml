@@ -105,6 +105,8 @@ definitions:
         type: string
       dialog_id:
         type: string
+      error:
+        type: string
       message:
         type: string
       relative_questions:
@@ -189,7 +191,7 @@ definitions:
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
-host: localhost:8085
+host: aihack.mrbelka12000.com
 info:
   contact:
     email: karshyga.beknur@gmail.com

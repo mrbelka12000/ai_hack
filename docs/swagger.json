@@ -15,7 +15,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8085",
+    "host": "aihack.mrbelka12000.com",
     "basePath": "/api/v1",
     "paths": {
         "/dialog": {
@@ -808,6 +808,9 @@
                     "type": "string"
                 },
                 "dialog_id": {
+                    "type": "string"
+                },
+                "error": {
                     "type": "string"
                 },
                 "message": {
