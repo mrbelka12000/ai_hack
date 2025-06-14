@@ -10,13 +10,16 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - '80:80'
+      - '4100:4100'
     depends_on:
       - front
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - front_data:/usr/share/nginx/html/
+    networks:
+      - main
     restart: always
+
   backend:
     image: mrbelka12000/ai_hack
     container_name: backend
