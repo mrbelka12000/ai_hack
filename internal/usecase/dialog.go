@@ -55,6 +55,7 @@ func (uc *UseCase) DialogDelete(ctx context.Context, id uuid.UUID) error {
 }
 
 func (uc *UseCase) DialogUpdate(ctx context.Context, obj internal.Dialog) error {
+	uc.cache.Delete(dialogCachePrefix + obj.ID.String())
 	return uc.dialogService.Update(ctx, obj)
 }
 
@@ -139,15 +140,17 @@ func (uc *UseCase) DialogAddMessage(ctx context.Context, obj internal.DialogMess
 	return nil
 }
 
-func (uc *UseCase) DialogFull(ctx context.Context, obj internal.DialogFull) (out internal.DialogMessageResponse, err error) {
+func (uc *UseCase) DialogFull(ctx context.Context, obj internal.DialogFull) (out uuid.UUID, err error) {
 	user, err := uc.userService.Get(ctx, internal.UserGetPars{
 		PhoneNumber: obj.PhoneNumber,
 	})
 	if err != nil {
 		return out, err
 	}
+
+	dialogID := uuid.New()
 	dialogCU := internal.DialogCU{
-		ID:        uuid.New(),
+		ID:        dialogID,
 		ClientID:  user.ID,
 		Status:    aihack.DialogStatusOpen,
 		CreatedAt: time.Now().UTC(),
@@ -157,18 +160,41 @@ func (uc *UseCase) DialogFull(ctx context.Context, obj internal.DialogFull) (out
 		return out, err
 	}
 
-	dialogMessages := parseFullDialog(obj.Message, dialogCU.ID)
+	dialogMessages := parseFullDialog(obj.Message, dialogID)
 
-	var response internal.DialogMessageResponse
 	for _, message := range dialogMessages {
-		response, err = uc.dialogsMessagesService.AddMessage(ctx, message, message.Role == aihack.RoleClient)
+		_, err = uc.dialogsMessagesService.AddMessage(ctx, message, false)
 		if err != nil {
 			return out, err
 		}
-		response.DialogID = message.DialogID
 	}
 
-	return response, nil
+	for i := len(dialogMessages) - 1; i >= 0; i-- {
+		if dialogMessages[i].Role == aihack.RoleClient {
+			response, err := uc.dialogsMessagesService.GetResponseToMessage(ctx, dialogMessages[i])
+			if err != nil {
+				return out, err
+			}
+
+			rawData, err := json.Marshal(response)
+			if err != nil {
+				return out, err
+			}
+
+			dialogObj := internal.Dialog{
+				ID:      dialogID,
+				RawData: rawData,
+			}
+
+			if err = uc.DialogUpdate(ctx, dialogObj); err != nil {
+				return out, err
+			}
+
+			break
+		}
+	}
+
+	return dialogID, nil
 }
 
 func parseFullDialog(message string, dialogID uuid.UUID) []internal.DialogMessage {

@@ -260,13 +260,15 @@ func (h *Handler) DialogUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	response, err := h.uc.DialogFull(r.Context(), obj)
+	dialogID, err := h.uc.DialogFull(r.Context(), obj)
 	if err != nil {
 		h.errorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(response); err != nil {
+	if err := json.NewEncoder(w).Encode(internal.DialogCreateResponse{
+		ID: dialogID,
+	}); err != nil {
 		h.errorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
