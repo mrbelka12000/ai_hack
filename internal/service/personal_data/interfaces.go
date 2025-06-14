@@ -9,6 +9,6 @@ import (
 type (
 	repo interface {
 		Create(ctx context.Context, obj internal.PersonalData) error
-		GetPersonalDataForResponse(ctx context.Context, obj internal.PersonalDataRequest) (any, error)
+		GetPersonalDataForResponse(ctx context.Context, obj internal.PersonalDataRequest) (string, error)
 	}
 )

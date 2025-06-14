@@ -20,7 +20,7 @@ func (r *Repo) Create(ctx context.Context, obj internal.PersonalData) error {
 	return r.db.WithContext(ctx).Table("personal_data").Create(obj).Error
 }
 
-func (r *Repo) GetPersonalDataForResponse(ctx context.Context, obj internal.PersonalDataRequest) (any, error) {
+func (r *Repo) GetPersonalDataForResponse(ctx context.Context, obj internal.PersonalDataRequest) (string, error) {
 	var (
 		validColumns = map[string]string{
 			"call-id":        "call_id",
@@ -44,12 +44,12 @@ func (r *Repo) GetPersonalDataForResponse(ctx context.Context, obj internal.Pers
 			"rate_effective": "rate_effective",
 		}
 
-		result any
+		result string
 	)
 
 	column, ok := validColumns[obj.DataType]
 	if !ok {
-		return nil, fmt.Errorf("invalid column: %s", obj.DataType)
+		return "", fmt.Errorf("invalid column: %s", obj.DataType)
 	}
 
 	var whereQuery string
