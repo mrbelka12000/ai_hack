@@ -2,6 +2,7 @@ package v1
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/mrbelka12000/ai_hack/internal"
@@ -28,6 +29,7 @@ func (h *Handler) GetPersonalData(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := h.uc.GetPersonalData(r.Context(), obj)
 	if err != nil {
+		log.Println(err)
 		h.errorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
