@@ -41,7 +41,7 @@ func (r *Repo) GetPersonalDataForResponse(ctx context.Context, obj internal.Pers
 			"sht":            "sht",
 			"br-vyd":         "br_vyd",
 			"flwork":         "flwork",
-			"rate-effective": "rate_effective",
+			"rate_effective": "rate_effective",
 		}
 
 		result any
