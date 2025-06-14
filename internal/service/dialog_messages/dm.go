@@ -56,7 +56,10 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage, ne
 		if err != nil {
 			return out, err
 		}
+	}
 
+	if resp.Error != "" {
+		resp.Message = resp.Error
 	}
 
 	return internal.DialogMessageResponse{
