@@ -23,6 +23,7 @@ type (
 		DatabaseFile      string   `json:"database_file"`
 		DatabaseFilePart  string   `json:"database_file_part"`
 		Confidence        float64  `json:"confidence"`
+		Error             string   `json:"error"`
 
 		DialogID uuid.UUID `json:"dialog_id,omitempty"`
 	}

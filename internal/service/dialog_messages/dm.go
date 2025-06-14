@@ -90,10 +90,6 @@ func (s *Service) GetResponseToMessage(ctx context.Context, obj internal.DialogM
 		return out, err
 	}
 
-	if resp.Error != "" {
-		resp.Message = resp.Error
-	}
-
 	if err = s.cache.Set(dialogMessagePrefix+obj.DialogID.String(), fullDialog, defaultTTL); err != nil {
 		return out, err
 	}
@@ -104,6 +100,7 @@ func (s *Service) GetResponseToMessage(ctx context.Context, obj internal.DialogM
 		DatabaseFile:      resp.DatabaseFile,
 		DatabaseFilePart:  resp.DatabaseFilePart,
 		Confidence:        resp.Confidence,
+		Error:             resp.Error,
 	}, nil
 }
 
