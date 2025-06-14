@@ -17,7 +17,7 @@ func New(db *postgres.Gorm) *Repo {
 }
 
 func (r *Repo) Create(ctx context.Context, obj internal.PersonalData) error {
-	return r.db.WithContext(ctx).Table("mb").Create(obj).Error
+	return r.db.WithContext(ctx).Table("personal_data").Create(obj).Error
 }
 
 func (r *Repo) GetPersonalDataForResponse(ctx context.Context, obj internal.PersonalDataRequest) (any, error) {
@@ -62,7 +62,7 @@ func (r *Repo) GetPersonalDataForResponse(ctx context.Context, obj internal.Pers
 
 	err := r.db.WithContext(ctx).
 		Table("personal_data").
-		Raw(fmt.Sprintf("SELECT %v FROM mb %s", column, whereQuery)).
+		Raw(fmt.Sprintf("SELECT %v FROM personal_data %s", column, whereQuery)).
 		Scan(&result).Error
 
 	return result, err
