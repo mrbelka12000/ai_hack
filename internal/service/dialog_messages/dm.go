@@ -58,6 +58,10 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage, ne
 		}
 	}
 
+	if err = s.cache.Set(dialogMessagePrefix+obj.DialogID.String(), fullDialog, defaultTTL); err != nil {
+		return out, err
+	}
+
 	if resp.Error != "" {
 		resp.Message = resp.Error
 	}

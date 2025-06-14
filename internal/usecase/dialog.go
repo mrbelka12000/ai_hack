@@ -178,35 +178,14 @@ func (uc *UseCase) DialogFull(ctx context.Context, obj internal.DialogFull) (out
 
 	dialogMessages := parseFullDialog(obj.Message, dialogID)
 
-	for _, message := range dialogMessages {
-		_, err = uc.dialogsMessagesService.AddMessage(ctx, message, false)
+	for i, message := range dialogMessages {
+		var needGenerate bool
+		if i == len(dialogMessages)-1 {
+			needGenerate = true
+		}
+		_, err = uc.dialogsMessagesService.AddMessage(ctx, message, needGenerate)
 		if err != nil {
 			return out, err
-		}
-	}
-
-	for i := len(dialogMessages) - 1; i >= 0; i-- {
-		if dialogMessages[i].Role == aihack.RoleClient {
-			response, err := uc.dialogsMessagesService.GetResponseToMessage(ctx, dialogMessages[i])
-			if err != nil {
-				return out, err
-			}
-
-			rawData, err := json.Marshal(response)
-			if err != nil {
-				return out, err
-			}
-
-			dialogObj := internal.Dialog{
-				ID:      dialogID,
-				RawData: rawData,
-			}
-
-			if err = uc.DialogUpdate(ctx, dialogObj); err != nil {
-				return out, err
-			}
-
-			break
 		}
 	}
 

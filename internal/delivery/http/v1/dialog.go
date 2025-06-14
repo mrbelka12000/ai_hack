@@ -269,6 +269,7 @@ func (h *Handler) DialogUpload(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(internal.DialogCreateResponse{
 		ID: dialogID,
 	}); err != nil {
+		в
 		h.errorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
