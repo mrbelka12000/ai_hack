@@ -23,25 +23,25 @@ func (r *Repo) Create(ctx context.Context, obj internal.PersonalData) error {
 func (r *Repo) GetPersonalDataForResponse(ctx context.Context, obj internal.PersonalDataRequest) (any, error) {
 	var (
 		validColumns = map[string]string{
-			"call_id":        "call_id",
-			"phone_number":   "phone_number",
+			"call-id":        "call_id",
+			"phone-number":   "phone_number",
 			"br":             "br",
 			"currency":       "currency",
-			"beg_date":       "beg_date",
-			"end_date":       "end_date",
-			"prol_date":      "prol_date",
-			"prol_count":     "prol_count",
+			"beg-date":       "beg_date",
+			"end-date":       "end_date",
+			"prol-date":      "prol_date",
+			"prol-count":     "prol_count",
 			"amt":            "amt",
-			"amt_tng":        "amt_tng",
+			"amt-tng":        "amt_tng",
 			"od":             "od",
-			"pr_od":          "pr_od",
-			"day_pr_od":      "day_pr_od",
+			"pr-od":          "pr_od",
+			"day-pr-od":      "day_pr_od",
 			"pog":            "pog",
 			"stav":           "stav",
 			"sht":            "sht",
-			"br_vyd":         "br_vyd",
+			"br-vyd":         "br_vyd",
 			"flwork":         "flwork",
-			"rate_effective": "rate_effective",
+			"rate-effective": "rate_effective",
 		}
 
 		result any

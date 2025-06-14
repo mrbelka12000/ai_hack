@@ -136,7 +136,7 @@ func (s *Service) GetPersonalDataForResponse(ctx context.Context, obj internal.P
 	}
 
 	return internal.PersonalDataResponse{
-		Result: result,
+		Message: result,
 	}, nil
 }
 

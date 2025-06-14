@@ -36,6 +36,6 @@ type (
 	}
 
 	PersonalDataResponse struct {
-		Result any `json:"result"`
+		Message any `json:"message"`
 	}
 )
