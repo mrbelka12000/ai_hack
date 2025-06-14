@@ -85,7 +85,7 @@ func (s *Service) StartParseRB(filePath string) error {
 	reader := csv.NewReader(file)
 	reader.LazyQuotes = true
 	reader.FieldsPerRecord = -1
-	//reader.Read()
+	reader.Read()
 	for {
 		record, err := reader.Read()
 		if err == io.EOF {
