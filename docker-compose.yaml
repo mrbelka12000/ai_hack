@@ -1,0 +1,113 @@
+version: "3.7"
+
+services:
+  front:
+    image: mrbelka12000/prompter
+    volumes:
+      - front_data:/app/dist
+    networks:
+      - main
+  nginx:
+    image: nginx:latest
+    ports:
+      - '80:80'
+    depends_on:
+      - front
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - front_data:/usr/share/nginx/html/
+    restart: always
+  backend:
+    image: mrbelka12000/ai_hack
+    container_name: backend
+    restart: always
+    environment:
+      PG_URL: "postgres://user:123456789@bereke_pg_container:5432/ai_hack_storage?sslmode=disable&connect_timeout=10"
+      REDIS_ADDR: "bereke_redis:6379"
+      SERVICE_NAME: "ai_hack_service"
+      PUBLIC_URL: "http://localhost:8085"
+      SECRET_KEY: "sukatest"
+      HTTP_PORT: "8085"
+      AI_SUFLER_API_URL: "http://ml:8086"
+      RUN_MB_MIGRATION: false
+
+    ports:
+      - "8085:8085"
+    networks:
+      - main
+#  ml:
+#    container_name: ml
+#    image: mrbelka12000/ai_sufler
+#    restart: always
+#    ports:
+#      - "8086:8086"
+#    environment:
+#      YANDEX_OAUTH_TOKEN: "y0__xCE9N2EARjB3RMgnr-CshMwmMfviwgT8hd9wn--_RZKN7Vde26AZEgmPg"
+#      YANDEX_FOLDER_ID: "b1g6mo8cr9rnkn496hr9"
+#    networks:
+#      - main
+
+  postgres:
+    container_name: bereke_pg_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: ai_hack_storage
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "123456789"
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_EXTENSIONS: "uuid-ossp"
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - main
+  redis:
+    image: redis:latest
+    container_name: bereke_redis
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_USER=${REDIS_USER}
+      - REDIS_USER_PASSWORD=${REDIS_USER_PASSWORD}
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redisdata:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    command: >
+      sh -c '
+        mkdir -p /usr/local/etc/redis &&
+        echo "bind 0.0.0.0" > /usr/local/etc/redis/redis.conf &&
+        echo "requirepass $REDIS_PASSWORD" >> /usr/local/etc/redis/redis.conf &&
+        echo "appendonly yes" >> /usr/local/etc/redis/redis.conf &&
+        echo "appendfsync everysec" >> /usr/local/etc/redis/redis.conf &&
+        echo "user default on nopass ~* +@all" > /usr/local/etc/redis/users.acl &&
+        echo "user $REDIS_USER on >$REDIS_USER_PASSWORD ~* +@all" >> /usr/local/etc/redis/users.acl &&
+        redis-server /usr/local/etc/redis/redis.conf --aclfile /usr/local/etc/redis/users.acl
+      '
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "$REDIS_PASSWORD", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    networks:
+      - main
+
+volumes:
+  pg_data:
+  front_data:
+
+networks:
+  main:

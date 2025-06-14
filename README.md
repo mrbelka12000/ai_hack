@@ -1,6 +1,7 @@
 # AI_HACK
 
-
+## Запуск
+    docker compose up
 
 ## Данные пользователей
 
