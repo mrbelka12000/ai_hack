@@ -2,7 +2,6 @@ package dialog
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 
@@ -16,11 +15,5 @@ type (
 		Delete(ctx context.Context, id uuid.UUID) error
 		Get(ctx context.Context, id uuid.UUID) (internal.Dialog, error)
 		List(ctx context.Context, pars internal.DialogPars) ([]internal.Dialog, error)
-	}
-
-	cache interface {
-		Set(key string, value interface{}, dur time.Duration) error
-		Get(key string) (string, bool)
-		Delete(key string)
 	}
 )

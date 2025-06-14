@@ -13,8 +13,24 @@ import (
 	"github.com/mrbelka12000/ai_hack/internal"
 )
 
-func (uc *UseCase) DialogGet(ctx context.Context, id uuid.UUID) (internal.Dialog, error) {
-	obj, err := uc.dialogService.Get(ctx, id)
+const (
+	dialogCachePrefix = "dialog_"
+	defaultTTL        = time.Minute * 5
+)
+
+func (uc *UseCase) DialogGet(ctx context.Context, id uuid.UUID) (obj internal.Dialog, err error) {
+	rawObject, ok := uc.cache.Get(dialogCachePrefix + id.String())
+	if ok {
+
+		if err = json.Unmarshal([]byte(rawObject), &obj); err != nil {
+			uc.log.With("error", err).Error("failed to unmarshal dialog")
+			return obj, err
+		}
+
+		return obj, nil
+	}
+
+	obj, err = uc.dialogService.Get(ctx, id)
 	if err != nil {
 		return internal.Dialog{}, err
 	}
@@ -22,6 +38,13 @@ func (uc *UseCase) DialogGet(ctx context.Context, id uuid.UUID) (internal.Dialog
 	obj.DialogsMessages, err = uc.dialogsMessagesService.GetMessagesByDialogID(ctx, id)
 	if err != nil {
 		return internal.Dialog{}, err
+	}
+
+	raw, err := json.Marshal(obj)
+	if err == nil {
+		if err = uc.cache.Set(dialogCachePrefix+id.String(), string(raw), defaultTTL); err != nil {
+			uc.log.With("error", err).Info("cache set")
+		}
 	}
 
 	return obj, nil
