@@ -30,7 +30,6 @@ func (s *Service) Create(ctx context.Context, obj internal.DialogCU) error {
 }
 
 func (s *Service) Update(ctx context.Context, obj internal.Dialog) error {
-
 	return s.repo.Update(ctx, obj)
 }
 

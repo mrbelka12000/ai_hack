@@ -15,7 +15,7 @@
         },
         "version": "1.0"
     },
-    "host": "aihack.mrbelka12000.com",
+    "host": "localhost:8085",
     "basePath": "/api/v1",
     "paths": {
         "/dialog": {

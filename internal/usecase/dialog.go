@@ -114,6 +114,7 @@ func (uc *UseCase) DialogList(ctx context.Context, pars internal.DialogPars) ([]
 }
 
 func (uc *UseCase) DialogAddMessage(ctx context.Context, obj internal.DialogMessage) error {
+	uc.cache.Delete(dialogCachePrefix + obj.DialogID.String())
 	response, err := uc.dialogsMessagesService.AddMessage(ctx, obj, obj.Role == aihack.RoleClient)
 	if err != nil {
 		return err
@@ -142,6 +143,21 @@ func (uc *UseCase) DialogAddMessage(ctx context.Context, obj internal.DialogMess
 
 func (uc *UseCase) DialogFull(ctx context.Context, obj internal.DialogFull) (out uuid.UUID, err error) {
 	user, err := uc.userService.Get(ctx, internal.UserGetPars{
+		PhoneNumber: obj.PhoneNumber,
+	})
+	if err != nil {
+		err = uc.UserCreate(ctx, internal.UserCU{
+			PhoneNumber: obj.PhoneNumber,
+			Code:        "1324",
+			Role:        aihack.RoleClient,
+			CreatedAt:   time.Now().UTC(),
+		})
+		if err != nil {
+			return out, err
+		}
+	}
+
+	user, err = uc.userService.Get(ctx, internal.UserGetPars{
 		PhoneNumber: obj.PhoneNumber,
 	})
 	if err != nil {

@@ -9,7 +9,7 @@ import (
 )
 
 func (uc *UseCase) GetPersonalData(ctx context.Context, obj internal.PersonalDataRequest) (internal.PersonalDataResponse, error) {
-	id, err := uuid.Parse(obj.CallID)
+	id, err := uuid.Parse(obj.DialogId)
 	if err != nil {
 		return internal.PersonalDataResponse{}, err
 	}
