@@ -48,7 +48,7 @@ func main() {
 		panic(err)
 	}
 
-	log := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With("service_name", cfg.ServiceName)
+	log := slog.New(slog.NewJSONHandler(os.Stderr, nil)).With("service_name", cfg.ServiceName)
 
 	db, err := postgres.New(cfg.PGURL)
 	if err != nil {
