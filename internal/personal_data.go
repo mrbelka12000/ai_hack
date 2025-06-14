@@ -1,7 +1,5 @@
 package internal
 
-import "github.com/google/uuid"
-
 type (
 	PersonalData struct {
 		CallID        string `gorm:"column:call_id"`
@@ -26,10 +24,10 @@ type (
 	}
 
 	PersonalDataRequest struct {
-		DialogId    uuid.UUID `json:"dialog_id"`
-		DataType    string    `json:"data_type"`
-		CallID      string    `json:"-"`
-		PhoneNumber string    `json:"-"`
+		DialogId    string `json:"dialog_id"`
+		DataType    string `json:"data_type"`
+		CallID      string `json:"-"`
+		PhoneNumber string `json:"-"`
 	}
 
 	PersonalDataPars struct {

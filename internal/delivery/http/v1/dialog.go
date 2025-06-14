@@ -246,7 +246,7 @@ func (h *Handler) DialogList(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Param        data  body     internal.DialogFull true "Dialog object"
-// @Success      200  {object} internal.DialogMessageResponse
+// @Success      200  {object}  internal.DialogCreateResponse
 // @Failure      400  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
 // @Failure      500  {object}  ErrorResponse

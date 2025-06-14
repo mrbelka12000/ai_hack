@@ -139,13 +139,14 @@ func (uc *UseCase) DialogAddMessage(ctx context.Context, obj internal.DialogMess
 	return nil
 }
 
-func (uc *UseCase) DialogFull(ctx context.Context, obj internal.DialogFull) (out internal.DialogMessageResponse, err error) {
+func (uc *UseCase) DialogFull(ctx context.Context, obj internal.DialogFull) (id uuid.UUID, err error) {
 	user, err := uc.userService.Get(ctx, internal.UserGetPars{
 		PhoneNumber: obj.PhoneNumber,
 	})
 	if err != nil {
-		return out, err
+		return uuid.Nil, err
 	}
+
 	dialogCU := internal.DialogCU{
 		ID:        uuid.New(),
 		ClientID:  user.ID,
@@ -154,19 +155,23 @@ func (uc *UseCase) DialogFull(ctx context.Context, obj internal.DialogFull) (out
 	}
 
 	if err = uc.dialogService.Create(ctx, dialogCU); err != nil {
-		return out, err
+		return uuid.Nil, err
 	}
 
 	dialogMessages := parseFullDialog(obj.Message, dialogCU.ID)
-
-	var response internal.DialogMessageResponse
+	var lastClientDialogMessage internal.DialogMessage
 	for _, message := range dialogMessages {
-		response, err = uc.dialogsMessagesService.AddMessage(ctx, message, message.Role == aihack.RoleClient)
-		if err != nil {
-			return out, err
+		if message.Role == aihack.RoleClient {
+			lastClientDialogMessage = message
 		}
-		response.DialogID = message.DialogID
+
+		_, err = uc.dialogsMessagesService.AddMessage(ctx, message, false)
+		if err != nil {
+			return uuid.Nil, err
+		}
 	}
+
+	response, err := uc.dialogsMessagesService.GetMessagesByDialogID(ctx, dialogCU.ID)
 
 	return response, nil
 }

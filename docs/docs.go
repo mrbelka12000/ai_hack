@@ -229,7 +229,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal.DialogMessageResponse"
+                            "$ref": "#/definitions/internal.DialogCreateResponse"
                         }
                     },
                     "400": {

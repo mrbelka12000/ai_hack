@@ -59,14 +59,6 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage, ne
 
 	}
 
-	if err = s.cache.Set(dialogMessagePrefix+obj.DialogID.String(), fullDialog, defaultTTL); err != nil {
-		return out, err
-	}
-
-	if resp.Error != "" {
-		resp.Message = resp.Error
-	}
-
 	return internal.DialogMessageResponse{
 		Message:           resp.Message,
 		RelativeQuestions: resp.RelativeQuestions,
@@ -78,6 +70,38 @@ func (s *Service) AddMessage(ctx context.Context, obj internal.DialogMessage, ne
 
 func (s *Service) GetMessagesByDialogID(ctx context.Context, dialogID uuid.UUID) ([]internal.DialogMessage, error) {
 	return s.repo.GetMessagesByDialogID(ctx, dialogID)
+}
+
+func (s *Service) GetResponseToMessage(ctx context.Context, obj internal.DialogMessage) (out internal.DialogMessageResponse, err error) {
+	messageFromCache, _ := s.cache.Get(dialogMessagePrefix + obj.DialogID.String())
+	messageToSave := getMessageToSaveInRedis(obj)
+
+	fullDialog := constructDialog(messageFromCache, messageToSave)
+
+	resp, err := s.mlClient.Analyze(ctx, ml.AnalyzeRequest{
+		DialogId: obj.DialogID.String(),
+		Dialog:   fullDialog,
+		LoggedIn: obj.IsLoggedIn,
+	})
+	if err != nil {
+		return out, err
+	}
+
+	if resp.Error != "" {
+		resp.Message = resp.Error
+	}
+
+	if err = s.cache.Set(dialogMessagePrefix+obj.DialogID.String(), fullDialog, defaultTTL); err != nil {
+		return out, err
+	}
+
+	return internal.DialogMessageResponse{
+		Message:           resp.Message,
+		RelativeQuestions: resp.RelativeQuestions,
+		DatabaseFile:      resp.DatabaseFile,
+		DatabaseFilePart:  resp.DatabaseFilePart,
+		Confidence:        resp.Confidence,
+	}, nil
 }
 
 func getMessageToSaveInRedis(obj internal.DialogMessage) string {
