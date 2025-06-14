@@ -14,7 +14,17 @@ import (
 )
 
 func (uc *UseCase) DialogGet(ctx context.Context, id uuid.UUID) (internal.Dialog, error) {
-	return uc.dialogService.Get(ctx, id)
+	obj, err := uc.dialogService.Get(ctx, id)
+	if err != nil {
+		return internal.Dialog{}, err
+	}
+
+	obj.DialogsMessages, err = uc.dialogsMessagesService.GetMessagesByDialogID(ctx, id)
+	if err != nil {
+		return internal.Dialog{}, err
+	}
+
+	return obj, nil
 }
 
 func (uc *UseCase) DialogDelete(ctx context.Context, id uuid.UUID) error {
