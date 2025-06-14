@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -58,6 +59,7 @@ func utility(next http.Handler) http.Handler {
 		defer func() {
 			if err := recover(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
+				log.Printf("RECOVER ERROR: %+v", err)
 				return
 			}
 		}()
